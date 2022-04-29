@@ -19,6 +19,5 @@ class User(AbstractUser):
         blank=False,
         choices=ROLES,
     )
-    email = models.EmailField(
-        blank=False
-    )
+    email = models.EmailField(blank=False, unique=True)
+    confirmation_code = models.TextField('Код подтверждения', blank=False)
