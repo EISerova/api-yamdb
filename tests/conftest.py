@@ -10,9 +10,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 root_dir_content = os.listdir(BASE_DIR)
 PROJECT_DIR_NAME = 'api_yamdb'
 # проверяем, что в корне репозитория лежит папка с проектом
-if (
-        PROJECT_DIR_NAME not in root_dir_content
-        or not os.path.isdir(os.path.join(BASE_DIR, PROJECT_DIR_NAME))
+if PROJECT_DIR_NAME not in root_dir_content or not os.path.isdir(
+    os.path.join(BASE_DIR, PROJECT_DIR_NAME)
 ):
     assert False, (
         f'В директории `{BASE_DIR}` не найдена папка c проектом `{PROJECT_DIR_NAME}`. '

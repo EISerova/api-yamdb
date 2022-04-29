@@ -15,9 +15,9 @@ class Test00UserRegistration:
         request_type = 'POST'
         response = client.post(self.url_signup)
 
-        assert response.status_code != 404, (
-            f'Страница `{self.url_signup}` не найдена, проверьте этот адрес в *urls.py*'
-        )
+        assert (
+            response.status_code != 404
+        ), f'Страница `{self.url_signup}` не найдена, проверьте этот адрес в *urls.py*'
         code = 400
         assert response.status_code == code, (
             f'Проверьте, что при {request_type} запросе `{self.url_signup}` без параметров '
@@ -26,8 +26,9 @@ class Test00UserRegistration:
         response_json = response.json()
         empty_fields = ['email', 'username']
         for field in empty_fields:
-            assert (field in response_json.keys()
-                    and isinstance(response_json[field], list)), (
+            assert field in response_json.keys() and isinstance(
+                response_json[field], list
+            ), (
                 f'Проверьте, что при {request_type} запросе `{self.url_signup}` без параметров '
                 f'в ответе есть сообщение о том, какие поля заполенены неправильно'
             )
@@ -37,16 +38,13 @@ class Test00UserRegistration:
         invalid_email = 'invalid_email'
         invalid_username = 'invalid_username@yamdb.fake'
 
-        invalid_data = {
-            'email': invalid_email,
-            'username': invalid_username
-        }
+        invalid_data = {'email': invalid_email, 'username': invalid_username}
         request_type = 'POST'
         response = client.post(self.url_signup, data=invalid_data)
 
-        assert response.status_code != 404, (
-            f'Страница `{self.url_signup}` не найдена, проверьте этот адрес в *urls.py*'
-        )
+        assert (
+            response.status_code != 404
+        ), f'Страница `{self.url_signup}` не найдена, проверьте этот адрес в *urls.py*'
         code = 400
         assert response.status_code == code, (
             f'Проверьте, что при {request_type} запросе `{self.url_signup}` с невалидными данными '
@@ -56,8 +54,9 @@ class Test00UserRegistration:
         response_json = response.json()
         invalid_fields = ['email']
         for field in invalid_fields:
-            assert (field in response_json.keys()
-                    and isinstance(response_json[field], list)), (
+            assert field in response_json.keys() and isinstance(
+                response_json[field], list
+            ), (
                 f'Проверьте, что при {request_type} запросе `{self.url_signup}` с невалидными параметрами, '
                 f'в ответе есть сообщение о том, какие поля заполенены неправильно'
             )
@@ -79,17 +78,14 @@ class Test00UserRegistration:
         valid_username = 'valid_username'
         outbox_before_count = len(mail.outbox)
 
-        valid_data = {
-            'email': valid_email,
-            'username': valid_username
-        }
+        valid_data = {'email': valid_email, 'username': valid_username}
         request_type = 'POST'
         response = client.post(self.url_signup, data=valid_data)
         outbox_after = mail.outbox  # email outbox after user create
 
-        assert response.status_code != 404, (
-            f'Страница `{self.url_signup}` не найдена, проверьте этот адрес в *urls.py*'
-        )
+        assert (
+            response.status_code != 404
+        ), f'Страница `{self.url_signup}` не найдена, проверьте этот адрес в *urls.py*'
 
         code = 200
         assert response.status_code == code, (
@@ -126,17 +122,16 @@ class Test00UserRegistration:
         valid_username = 'valid_username'
         outbox_before_count = len(mail.outbox)
 
-        valid_data = {
-            'email': valid_email,
-            'username': valid_username
-        }
+        valid_data = {'email': valid_email, 'username': valid_username}
         request_type = 'POST'
-        response = admin_client.post(self.url_admin_create_user, data=valid_data)
+        response = admin_client.post(
+            self.url_admin_create_user, data=valid_data
+        )
         outbox_after = mail.outbox
 
-        assert response.status_code != 404, (
-            f'Страница `{self.url_admin_create_user}` не найдена, проверьте этот адрес в *urls.py*'
-        )
+        assert (
+            response.status_code != 404
+        ), f'Страница `{self.url_admin_create_user}` не найдена, проверьте этот адрес в *urls.py*'
 
         code = 201
         assert response.status_code == code, (
@@ -145,7 +140,9 @@ class Test00UserRegistration:
         )
         response_json = response.json()
         for field in valid_data:
-            assert field in response_json and valid_data.get(field) == response_json.get(field), (
+            assert field in response_json and valid_data.get(
+                field
+            ) == response_json.get(field), (
                 f'Проверьте, что при {request_type} запросе `{self.url_admin_create_user}` с валидными данными '
                 f'от имени администратора, в ответ приходит созданный объект пользователя в виде словаря'
             )
@@ -169,9 +166,9 @@ class Test00UserRegistration:
 
         request_type = 'POST'
         response = client.post(self.url_token)
-        assert response.status_code != 404, (
-            f'Страница `{self.url_token}` не найдена, проверьте этот адрес в *urls.py*'
-        )
+        assert (
+            response.status_code != 404
+        ), f'Страница `{self.url_token}` не найдена, проверьте этот адрес в *urls.py*'
 
         code = 400
         assert response.status_code == code, (
@@ -179,9 +176,7 @@ class Test00UserRegistration:
             f'возвращается статус {code}'
         )
 
-        invalid_data = {
-            'confirmation_code': 12345
-        }
+        invalid_data = {'confirmation_code': 12345}
         response = client.post(self.url_token, data=invalid_data)
         assert response.status_code == code, (
             f'Проверьте, что при POST запросе `{self.url_token}` без username, '
@@ -190,7 +185,7 @@ class Test00UserRegistration:
 
         invalid_data = {
             'username': 'unexisting_user',
-            'confirmation_code': 12345
+            'confirmation_code': 12345,
         }
         response = client.post(self.url_token, data=invalid_data)
         code = 404
@@ -202,10 +197,7 @@ class Test00UserRegistration:
         valid_email = 'valid@yamdb.fake'
         valid_username = 'valid_username'
 
-        valid_data = {
-            'email': valid_email,
-            'username': valid_username
-        }
+        valid_data = {'email': valid_email, 'username': valid_username}
         response = client.post(self.url_signup, data=valid_data)
         code = 200
         assert response.status_code == code, (
@@ -213,10 +205,7 @@ class Test00UserRegistration:
             f'создается пользователь и возвращается статус {code}'
         )
 
-        invalid_data = {
-            'username': valid_username,
-            'confirmation_code': 12345
-        }
+        invalid_data = {'username': valid_username, 'confirmation_code': 12345}
         response = client.post(self.url_token, data=invalid_data)
         code = 400
         assert response.status_code == code, (
@@ -230,10 +219,7 @@ class Test00UserRegistration:
         invalid_username = 'me'
         request_type = 'POST'
 
-        valid_data = {
-            'email': valid_email,
-            'username': invalid_username
-        }
+        valid_data = {'email': valid_email, 'username': invalid_username}
         response = client.post(self.url_signup, data=valid_data)
         code = 400
         assert response.status_code == code, (
@@ -249,10 +235,7 @@ class Test00UserRegistration:
         valid_username_2 = 'valid_username_2'
         request_type = 'POST'
 
-        valid_data = {
-            'email': valid_email_1,
-            'username': valid_username_1
-        }
+        valid_data = {'email': valid_email_1, 'username': valid_username_1}
         response = client.post(self.url_signup, data=valid_data)
         code = 200
         assert response.status_code == code, (
@@ -262,7 +245,7 @@ class Test00UserRegistration:
 
         duplicate_email_data = {
             'email': valid_email_1,
-            'username': valid_username_2
+            'username': valid_username_2,
         }
         response = client.post(self.url_signup, data=duplicate_email_data)
         code = 400
@@ -272,7 +255,7 @@ class Test00UserRegistration:
         )
         duplicate_username_data = {
             'email': valid_email_2,
-            'username': valid_username_1
+            'username': valid_username_1,
         }
         response = client.post(self.url_signup, data=duplicate_username_data)
         assert response.status_code == code, (
