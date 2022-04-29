@@ -19,6 +19,13 @@ class User(AbstractUser):
         blank=False,
         choices=ROLES,
     )
-    email = models.EmailField(
-        blank=False
-    )
+    email = models.EmailField(blank=False, null=False, unique=True)
+    confirmation_code = models.TextField('Код подтверждения', null=True)
+
+    def is_admin(self):
+        return self.role == 'a'
+
+    def is_moderator(self):
+        return self.role == 'm'
+
+
