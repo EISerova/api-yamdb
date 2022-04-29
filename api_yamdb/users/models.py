@@ -19,6 +19,4 @@ class User(AbstractUser):
         blank=False,
         choices=ROLES,
     )
-    email = models.EmailField(
-        blank=False
-    )
+    email = models.EmailField(blank=False)
