@@ -4,9 +4,9 @@ from django.db import models
 
 class User(AbstractUser):
     ROLES = (
-        ('u', 'user'),
-        ('m', 'moderator'),
-        ('a', 'admin'),
+        ('user', 'user'),
+        ('moderator', 'moderator'),
+        ('aadmin', 'admin'),
     )
     bio = models.TextField(
         'Биография',
@@ -14,7 +14,7 @@ class User(AbstractUser):
     )
     role = models.CharField(
         'Роль',
-        max_length=1,
+        max_length=150,
         default='user',
         blank=False,
         choices=ROLES,
@@ -23,7 +23,7 @@ class User(AbstractUser):
     confirmation_code = models.TextField('Код подтверждения', null=True)
 
     def is_admin(self):
-        return self.role == 'a'
+        return self.role == 'admin' or self.is_superuser
 
     def is_moderator(self):
-        return self.role == 'm'
+        return self.role == 'moderator'

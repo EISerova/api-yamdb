@@ -20,6 +20,7 @@ class Command(BaseCommand):
                 bio = row['bio']
                 first_name = row['first_name']
                 last_name = row['last_name']
+                confirmation_code = row['confirmation_code']
 
                 try:
                     User.objects.get_or_create(
@@ -30,6 +31,7 @@ class Command(BaseCommand):
                         bio=bio,
                         first_name=first_name,
                         last_name=last_name,
+                        confirmation_code=confirmation_code,
                     )
                 except Exception as error:
                     message = f'Ошибка - {error}, проблема в строке - {row}'
