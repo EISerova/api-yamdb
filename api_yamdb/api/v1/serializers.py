@@ -8,8 +8,29 @@ from users.models import User
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = '__all__'
+        fields = (
+            'username',
+            'email',
+            'role',
+            'first_name',
+            'last_name',
+            'bio',
+        )
         model = User
+
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = (
+            'username',
+            'email',
+            'role',
+            'first_name',
+            'last_name',
+            'bio',
+        )
+        model = User
+        read_only_fields = ('role',)
 
 
 class SignUpSerializer(serializers.ModelSerializer):
