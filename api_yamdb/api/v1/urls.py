@@ -1,16 +1,15 @@
-"""Роутеры к API-запросам."""
-
 from django.urls import include, path
 from rest_framework import routers
 
-from .views import UserSignUp
-from .views import UsersViewSet, UserAuth
+from .views import UserSignUp, UsersViewSet, UserAuth, CategoryViewSet, GenreViewSet, ReviewViewSet, TitleViewSet
 
 app_name = 'api'
 
 router_v1 = routers.DefaultRouter()
 
-
+router_v1.register('categories', CategoryViewSet, basename='сategories')
+router_v1.register('titles', TitleViewSet, basename='titles')
+router_v1.register('genres', GenreViewSet, basename='genres')
 router_v1.register(r'users', UsersViewSet, basename='users')
 router_v1.register(
     r'titles/(?P<title_id>\d+)/reviews', ReviewViewSet, basename='review'

@@ -1,7 +1,10 @@
+from django.db.models import Avg
+from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, filters, status, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import (
@@ -11,6 +14,8 @@ from rest_framework.permissions import (
 from users.models import User
 from reviews.models import Category, Comment, Genre, Review, Title
 
+
+from .filters import TitleFilter
 from .serializers import UserSerializer, SignUpSerializer, TokenSerializer
 from .utils import create_confirmation_code, send_email, get_tokens_for_user
 from .mixins import CreateDestroyListMixin
@@ -72,7 +77,6 @@ class UserDetailViewSet(viewsets.ModelViewSet):
     """Профиль пользователя."""
 
 
-
 class CategoryViewSet(CreateDestroyListMixin):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
@@ -92,6 +96,18 @@ class GenreViewSet(CreateDestroyListMixin):
 
 
 class TitleViewSet(ModelViewSet):
+    queryset = Title.objects.annotate(rating=Avg('reviews__score')).all()
+    permission_classes = (IsAdminUserOrReadOnly,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = TitleFilter
+
+    def get_serializer_class(self):
+        if self.action in ('list', 'retrieve'):
+            return TitleReadSerializer
+        return TitleWriteSerializer
+
+
+class ReviewViewSet(ModelViewSet):
     pass
 
 
