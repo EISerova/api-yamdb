@@ -31,7 +31,9 @@ from .serializers import (
 
 
 class UserSignUp(APIView):
-    """Регистрация новых пользователей и отправка кода подтвержения на почту."""
+    """
+    Регистрация новых пользователей и отправка кода подтвержения на почту.
+    """
 
     def post(self, request):
         serializer = SignUpSerializer(data=request.data)
@@ -105,10 +107,6 @@ class TitleViewSet(ModelViewSet):
         if self.action in ('list', 'retrieve'):
             return TitleReadSerializer
         return TitleWriteSerializer
-
-
-class ReviewViewSet(ModelViewSet):
-    pass
 
 
 class ReviewViewSet(ModelViewSet):
