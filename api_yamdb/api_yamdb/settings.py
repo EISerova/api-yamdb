@@ -25,7 +25,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'api',
     'reviews',
-    'users'
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -74,6 +74,8 @@ DATABASES = {
 
 
 # Password validation
+
+AUTH_USER_MODEL = 'users.User'
 
 AUTH_PASSWORD_VALIDATORS = [
     {

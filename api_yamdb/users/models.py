@@ -27,5 +27,3 @@ class User(AbstractUser):
 
     def is_moderator(self):
         return self.role == 'm'
-
-

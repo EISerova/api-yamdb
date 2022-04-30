@@ -2,10 +2,21 @@ from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, filters, status, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
+
 from users.models import User
+from reviews.models import Category, Comments, Genre, Review, Title
 
 from .serializers import UserSerializer, SignUpSerializer, TokenSerializer
 from .utils import create_confirmation_code, send_email, get_tokens_for_user
+from .mixins import CreateDestroyListMixin
+from .permissions import IsAdminUserOrReadOnly
+from .serializers import (
+    CategorySerializer,
+    GenreSerializer,
+    TitleReadSerializer,
+    TitleWriteSerializer,
+)
 
 
 class UserSignUp(APIView):
@@ -54,4 +65,24 @@ class UsersViewSet(viewsets.ModelViewSet):
 class UserDetailViewSet(viewsets.ModelViewSet):
     """Профиль пользователя."""
 
+
+class CategoryViewSet(CreateDestroyListMixin):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = (IsAdminUserOrReadOnly,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+    lookup_field = 'slug'
+
+
+class GenreViewSet(CreateDestroyListMixin):
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
+    permission_classes = (IsAdminUserOrReadOnly,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+    lookup_field = 'slug'
+
+
+class TitleViewSet(ModelViewSet):
     pass
