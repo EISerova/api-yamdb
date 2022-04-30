@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import RegexValidator
 
 from users.models import User
+from .validators import validate_score
 
 
 class Genre(models.Model):
@@ -60,7 +61,7 @@ class Review(models.Model):
     text = models.TextField(
         'текст',
     )
-    title_id = models.ForeignKey(
+    title = models.ForeignKey(
         Title, on_delete=models.CASCADE, related_name='reviews'
     )
     author = models.ForeignKey(
@@ -68,13 +69,7 @@ class Review(models.Model):
         on_delete=models.CASCADE,
         related_name='reviews',
     )
-    score = models.CharField(
-        'оценка',
-        max_length=10,
-        validators=[
-            RegexValidator(r"^\d{1,10}$"),
-        ],
-    )
+    score = models.IntegerField('оценка', validators=[validate_score])
     pub_date = models.DateTimeField(
         'публикации',
         auto_now_add=True,
