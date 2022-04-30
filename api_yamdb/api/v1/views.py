@@ -114,7 +114,7 @@ class ReviewViewSet(ModelViewSet):
 
     serializer_class = ReviewSerializer
     pagination_class = LimitOffsetPagination
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (ReviewCommentPermission,)
 
     def get_title(self):
         """Получает из запроса объект Title."""
@@ -137,7 +137,7 @@ class CommentViewSet(ModelViewSet):
 
     serializer_class = CommentSerializer
     pagination_class = LimitOffsetPagination
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (ReviewCommentPermission,)
 
     def get_review(self):
         return get_object_or_404(
@@ -151,7 +151,9 @@ class CommentViewSet(ModelViewSet):
         Создает комментарий к обзору.
         Автором комментария автоматически устанавливается пользователь.
         """
-        serializer.save(author=self.request.user, review_id=self.get_review())
+        serializer.save(
+            author=self.request.user, review_id=self.get_review().id
+        )
 
     def get_queryset(self):
         """Возвращает список комментариев к обзору."""
