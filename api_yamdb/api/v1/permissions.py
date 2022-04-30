@@ -1,5 +1,31 @@
-from rest_framework import permissions
+from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 
-class IsAdminUserOrReadOnly(permissions.BasePermission):
+class IsAdminUserOrReadOnly(BasePermission):
     pass
+
+
+class ReviewCommentPermission(BasePermission):
+    """
+    Класс для ограничения доступа к отзывам и комментариям.
+    Если запрос безопасный - доступ разрешен,
+    небезопасные запросы доступны только администрации или автору.
+    """
+
+    message = 'Нет прав для изменения/удаления отзывы или комментария.'
+
+    def has_permission(self, request, view):
+        return request.method in SAFE_METHODS or request.user.is_authenticated
+
+    def has_object_permission(self, request, view, obj):
+        """
+        Проверяет тип запроса на безопасность.
+        Если запрос небезопасный - проверяет,
+        что запрос сделан автором или администрацией.
+        """
+        return (
+            request.method in SAFE_METHODS
+            or obj.author == request.user
+            or request.user.is_admin
+            or request.user.is_moderator
+        )
