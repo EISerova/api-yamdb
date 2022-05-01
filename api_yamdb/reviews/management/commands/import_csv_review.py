@@ -17,16 +17,16 @@ class Command(BaseCommand):
             for row in csv_reader:
                 id = row['id']
                 text = row['text']
-                title_id = row['title_id']
-                author = row['author']
+                title = row['title_id']
+                author_id = row['author']
                 score = row['score']
                 pub_date = row['pub_date']
                 try:
                     Review.objects.get_or_create(
                         id=id,
                         text=text,
-                        title_id=title_id,
-                        author_id=author,
+                        title_id=title,
+                        author_id=author_id,
                         score=score,
                         pub_date=pub_date,
                     )

@@ -73,13 +73,19 @@ class TokenSerializer(serializers.ModelSerializer):
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = (
+            'name',
+            'slug',
+        )
 
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
-        fields = '__all__'
+        fields = (
+            'name',
+            'slug',
+        )
 
 
 class TitleReadSerializer(serializers.ModelSerializer):
@@ -88,7 +94,14 @@ class TitleReadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Title
-        fields = '__all__'
+        fields = (
+            'id',
+            'name',
+            'year',
+            'description',
+            'genre',
+            'category',
+        )
 
 
 class TitleWriteSerializer(serializers.ModelSerializer):
@@ -101,13 +114,31 @@ class TitleWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Title
-        fields = '__all__'
+        fields = (
+            'id',
+            'name',
+            'year',
+            'description',
+            'genre',
+            'category',
+        )
 
 
 class ReviewSerializer(serializers.ModelSerializer):
     """Сериализатор для запросов по обзорам."""
 
     author = SlugRelatedField(slug_field='username', read_only=True)
+
+    def validate(self, data):
+        """Проверка, что это первый отзыв пользователя на произведение."""
+        if self.context.get('request').method != 'POST':
+            return data
+        title_id = self.context.get('view').kwargs.get('title_id')
+        user = self.context.get('request').user
+        message = 'Вы уже оставляли отзыв на это произведение.'
+        if Review.objects.filter(title=title_id, author=user).exists():
+            raise serializers.ValidationError(message)
+        return data
 
     class Meta:
         model = Review
@@ -118,7 +149,6 @@ class ReviewSerializer(serializers.ModelSerializer):
             'score',
             'pub_date',
         )
-        read_only_fields = ('title',)
 
 
 class CommentSerializer(serializers.ModelSerializer):

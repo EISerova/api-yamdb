@@ -39,6 +39,7 @@ class UserSignUp(APIView):
     """
     Регистрация новых пользователей и отправка кода подтвержения на почту.
     """
+
     permission_classes = (AllowAny,)
 
     def post(self, request):
@@ -73,7 +74,7 @@ class UserAuth(generics.CreateAPIView):
         return Response(response, status=status.HTTP_200_OK)
 
 
-class UsersViewSet(viewsets.ModelViewSet):
+class UsersViewSet(ModelViewSet):
     """Отображение списка пользователей, профиля и добавление новых админом."""
 
     queryset = User.objects.all()
