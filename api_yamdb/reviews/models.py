@@ -1,7 +1,7 @@
 from django.db import models
 from users.models import User
 
-from .validators import validate_score
+from .validators import validate_score, validate_year
 
 
 class Genre(models.Model):
@@ -40,9 +40,7 @@ class Title(models.Model):
     description = models.TextField(
         'Описание', max_length=255, null=True, blank=True
     )
-    year = models.IntegerField(
-        'Год',
-    )
+    year = models.IntegerField('Год', validators=[validate_year])
     category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
