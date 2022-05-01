@@ -81,7 +81,6 @@ class UsersViewSet(ModelViewSet):
     serializer_class = UserSerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('username',)
-
     permission_classes = (IsAdmin,)
     lookup_field = 'username'
 
@@ -103,7 +102,6 @@ class UsersViewSet(ModelViewSet):
 class CategoryViewSet(CreateDestroyListMixin):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-
     permission_classes = (IsAdminUserOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
@@ -113,7 +111,6 @@ class CategoryViewSet(CreateDestroyListMixin):
 class GenreViewSet(CreateDestroyListMixin):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-
     permission_classes = (IsAdminUserOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
@@ -121,8 +118,7 @@ class GenreViewSet(CreateDestroyListMixin):
 
 
 class TitleViewSet(ModelViewSet):
-    queryset = Title.objects.annotate(rating=Avg('reviews__score'))
-
+    queryset = Title.objects.annotate(rating=Avg('reviews__score')).all()
     permission_classes = (IsAdminUserOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
@@ -137,7 +133,6 @@ class ReviewViewSet(ModelViewSet):
     """Обрабатывает запрос к обзорам."""
 
     serializer_class = ReviewSerializer
-
     permission_classes = (ReviewCommentPermission,)
 
     def get_title(self):
