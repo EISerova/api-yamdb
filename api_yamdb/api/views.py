@@ -5,6 +5,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import viewsets
 from rest_framework.viewsets import ModelViewSet
 from reviews.models import Category, Genre, Review, Title
 from users.models import User
@@ -30,6 +31,21 @@ from .serializers import (
     UserSerializer,
 )
 from .utils import create_confirmation_code, get_tokens_for_user, send_email
+
+
+class CategoryGenreViewSet(
+    CreateDestroyListMixin,
+    viewsets.GenericViewSet
+):
+    """
+    Класс, обеспечивающий базовую функциональность для классов
+    CategoryViewSet и GenreViewSet.
+    """
+
+    permission_classes = (IsAdminUserOrReadOnly,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+    lookup_field = 'slug'
 
 
 class UserSignUp(APIView):
@@ -96,26 +112,18 @@ class UsersViewSet(ModelViewSet):
         return Response(serializer.data)
 
 
-class CategoryViewSet(CreateDestroyListMixin):
+class CategoryViewSet(CategoryGenreViewSet):
     """Обрабатывает запрос к категориям."""
 
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = (IsAdminUserOrReadOnly,)
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('name',)
-    lookup_field = 'slug'
 
 
-class GenreViewSet(CreateDestroyListMixin):
+class GenreViewSet(CategoryGenreViewSet):
     """Обрабатывает запрос к жанрам."""
 
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    permission_classes = (IsAdminUserOrReadOnly,)
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('name',)
-    lookup_field = 'slug'
 
 
 class TitleViewSet(ModelViewSet):
