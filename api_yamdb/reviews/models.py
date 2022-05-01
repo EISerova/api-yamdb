@@ -1,11 +1,12 @@
 from django.db import models
-from django.core.validators import RegexValidator
-
 from users.models import User
+
 from .validators import validate_score
 
 
 class Genre(models.Model):
+    """Модель жанров."""
+
     slug = models.SlugField(unique=True, db_index=True)
     name = models.CharField('Жанр', max_length=30)
     description = models.CharField('Описание', max_length=200)
@@ -19,6 +20,8 @@ class Genre(models.Model):
 
 
 class Category(models.Model):
+    """Модель категорий."""
+
     slug = models.SlugField(unique=True, db_index=True)
     name = models.CharField('Категория', max_length=20)
 
@@ -31,6 +34,8 @@ class Category(models.Model):
 
 
 class Title(models.Model):
+    """Модель произведений."""
+
     name = models.CharField('Название', max_length=200, db_index=True)
     description = models.TextField(
         'Описание', max_length=255, null=True, blank=True

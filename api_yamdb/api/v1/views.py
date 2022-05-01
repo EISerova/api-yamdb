@@ -1,38 +1,35 @@
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, filters, status, generics
+from rest_framework import filters, generics, status
 from rest_framework.decorators import action
-from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
-
 from reviews.models import Category, Genre, Review, Title
 from users.models import User
 
 from .filters import TitleFilter
 from .mixins import CreateDestroyListMixin
 from .permissions import (
-    IsAdminUserOrReadOnly,
-    ReviewCommentPermission,
     IsAdmin,
+    IsAdminUserOrReadOnly,
     IsOwnerOfProfile,
+    ReviewCommentPermission,
 )
 from .serializers import (
     CategorySerializer,
+    CommentSerializer,
     GenreSerializer,
+    ReviewSerializer,
+    SignUpSerializer,
     TitleReadSerializer,
     TitleWriteSerializer,
-    ReviewSerializer,
-    CommentSerializer,
-    UserSerializer,
-    UserDetailSerializer,
-    SignUpSerializer,
     TokenSerializer,
+    UserDetailSerializer,
+    UserSerializer,
 )
-from .utils import create_confirmation_code, send_email, get_tokens_for_user
+from .utils import create_confirmation_code, get_tokens_for_user, send_email
 
 
 class UserSignUp(APIView):
@@ -100,6 +97,8 @@ class UsersViewSet(ModelViewSet):
 
 
 class CategoryViewSet(CreateDestroyListMixin):
+    """Обрабатывает запрос к категориям."""
+
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = (IsAdminUserOrReadOnly,)
@@ -109,6 +108,8 @@ class CategoryViewSet(CreateDestroyListMixin):
 
 
 class GenreViewSet(CreateDestroyListMixin):
+    """Обрабатывает запрос к жанрам."""
+
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     permission_classes = (IsAdminUserOrReadOnly,)
@@ -118,9 +119,10 @@ class GenreViewSet(CreateDestroyListMixin):
 
 
 class TitleViewSet(ModelViewSet):
+    """Обрабатывает запрос к произведениям."""
+
     queryset = Title.objects.annotate(rating=Avg('reviews__score')).all()
     permission_classes = (IsAdminUserOrReadOnly,)
-    filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
 
     def get_serializer_class(self):
@@ -155,7 +157,6 @@ class CommentViewSet(ModelViewSet):
     """Обрабатывает запрос к комментариям."""
 
     serializer_class = CommentSerializer
-
     permission_classes = (ReviewCommentPermission,)
 
     def get_review(self):
