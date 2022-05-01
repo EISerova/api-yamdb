@@ -155,7 +155,7 @@ class CommentViewSet(ModelViewSet):
     """Обрабатывает запрос к комментариям."""
 
     serializer_class = CommentSerializer
-    pagination_class = LimitOffsetPagination
+
     permission_classes = (ReviewCommentPermission,)
 
     def get_review(self):
