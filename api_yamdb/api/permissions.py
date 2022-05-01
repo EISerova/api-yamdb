@@ -1,7 +1,14 @@
-from rest_framework.permissions import BasePermission, SAFE_METHODS
+from rest_framework.permissions import SAFE_METHODS, BasePermission
 
 
 class IsAdminUserOrReadOnly(BasePermission):
+    """
+    Если запрос безопасный - доступ разрешен,
+    небезопасные запросы доступны только администрации.
+    """
+
+    message = 'Такие права имеет только админ.'
+
     def has_permission(self, request, view):
         if request.method in SAFE_METHODS:
             return True
@@ -37,6 +44,10 @@ class ReviewCommentPermission(BasePermission):
 
 
 class IsOwnerOfProfile(BasePermission):
+    """Класс для ограничения доступа всем, кроме автора."""
+
+    message = 'Такие права имеет только автор.'
+
     def has_permission(self, request, view):
         return request.user.is_authenticated
 
@@ -45,6 +56,8 @@ class IsOwnerOfProfile(BasePermission):
 
 
 class IsAdmin(BasePermission):
+    """Класс для ограничения доступа всем, кроме админа."""
+
     def has_permission(self, request, view):
         if request.user.is_authenticated:
             return request.user.is_admin()

@@ -1,12 +1,13 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
-
-from reviews.models import Category, Genre, Title, Comment, Review
+from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
+    """Сериализатор для вывода списка юзеров."""
+
     class Meta:
         fields = (
             'username',
@@ -20,6 +21,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
+    """Сериализатор для просмотра юзером своего профиля."""
+
     class Meta:
         fields = (
             'username',
@@ -34,11 +37,11 @@ class UserDetailSerializer(serializers.ModelSerializer):
 
 
 class SignUpSerializer(serializers.ModelSerializer):
+    """Сериализатор для регистрации."""
+
     def validate(self, data):
         if data['username'] == 'me':
-            raise serializers.ValidationError(
-                f'Имя пользователя me запрещено.'
-            )
+            raise serializers.ValidationError('Имя пользователя me запрещено.')
         return data
 
     def create(self, validated_data):
@@ -53,6 +56,8 @@ class SignUpSerializer(serializers.ModelSerializer):
 
 
 class TokenSerializer(serializers.ModelSerializer):
+    """Сериализатор для создания токенов."""
+
     username = serializers.CharField(max_length=150)
     confirmation_code = serializers.CharField(max_length=16)
 
@@ -61,16 +66,19 @@ class TokenSerializer(serializers.ModelSerializer):
         fields = ('username', 'confirmation_code')
 
     def validate(self, data):
+        """Проверка переданного кода подтверждения."""
         user = get_object_or_404(User, username=data['username'])
         confirmation_code = user.confirmation_code
         if data['confirmation_code'] != confirmation_code:
             raise serializers.ValidationError(
-                f'Передан неверный код подтвержления.'
+                'Передан неверный код подтверждения.'
             )
         return data
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    """Сериализатор для запросов по категориям."""
+
     class Meta:
         model = Category
         fields = (
@@ -80,6 +88,8 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class GenreSerializer(serializers.ModelSerializer):
+    """Сериализатор для запросов по жанрам."""
+
     class Meta:
         model = Genre
         fields = (
@@ -89,6 +99,8 @@ class GenreSerializer(serializers.ModelSerializer):
 
 
 class TitleReadSerializer(serializers.ModelSerializer):
+    """Сериализатор для безопасных запросов по произведениям."""
+
     category = CategorySerializer(read_only=True)
     genre = GenreSerializer(read_only=True, many=True)
     rating = serializers.IntegerField(read_only=True)
@@ -107,6 +119,8 @@ class TitleReadSerializer(serializers.ModelSerializer):
 
 
 class TitleWriteSerializer(serializers.ModelSerializer):
+    """Сериализатор для небезопасных запросов по произведениям."""
+
     category = serializers.SlugRelatedField(
         queryset=Category.objects.all(), slug_field='slug'
     )
