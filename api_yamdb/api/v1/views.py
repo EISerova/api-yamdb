@@ -81,7 +81,6 @@ class UsersViewSet(ModelViewSet):
     serializer_class = UserSerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('username',)
-    pagination_class = LimitOffsetPagination
     permission_classes = (IsAdmin,)
     lookup_field = 'username'
 
@@ -103,7 +102,6 @@ class UsersViewSet(ModelViewSet):
 class CategoryViewSet(CreateDestroyListMixin):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    pagination_class = LimitOffsetPagination
     permission_classes = (IsAdminUserOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
@@ -113,7 +111,6 @@ class CategoryViewSet(CreateDestroyListMixin):
 class GenreViewSet(CreateDestroyListMixin):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    pagination_class = LimitOffsetPagination
     permission_classes = (IsAdminUserOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
@@ -122,7 +119,6 @@ class GenreViewSet(CreateDestroyListMixin):
 
 class TitleViewSet(ModelViewSet):
     queryset = Title.objects.annotate(rating=Avg('reviews__score')).all()
-    pagination_class = LimitOffsetPagination
     permission_classes = (IsAdminUserOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
@@ -137,7 +133,6 @@ class ReviewViewSet(ModelViewSet):
     """Обрабатывает запрос к обзорам."""
 
     serializer_class = ReviewSerializer
-    pagination_class = LimitOffsetPagination
     permission_classes = (ReviewCommentPermission,)
 
     def get_title(self):
@@ -153,7 +148,7 @@ class ReviewViewSet(ModelViewSet):
 
     def get_queryset(self):
         """Возвращает список обзоров к произведению."""
-        return self.get_title().reviews
+        return self.get_title().reviews.all()
 
 
 class CommentViewSet(ModelViewSet):
@@ -181,4 +176,4 @@ class CommentViewSet(ModelViewSet):
 
     def get_queryset(self):
         """Возвращает список комментариев к обзору."""
-        return self.get_review().comments
+        return self.get_review().comments.all()
