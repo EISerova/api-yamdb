@@ -1,23 +1,25 @@
 from django.db.models import Avg
-from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, filters, status, generics
+from rest_framework.decorators import action
+from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
 
+from reviews.models import Category, Genre, Review, Title
 from users.models import User
-from reviews.models import Category, Comment, Genre, Review, Title
-
 
 from .filters import TitleFilter
-from .serializers import UserSerializer, SignUpSerializer, TokenSerializer
-from .utils import create_confirmation_code, send_email, get_tokens_for_user
 from .mixins import CreateDestroyListMixin
-from .permissions import IsAdminUserOrReadOnly, ReviewCommentPermission
+from .permissions import (
+    IsAdminUserOrReadOnly,
+    ReviewCommentPermission,
+    IsAdmin,
+    IsOwnerOfProfile,
+)
 from .serializers import (
     CategorySerializer,
     GenreSerializer,
@@ -25,14 +27,18 @@ from .serializers import (
     TitleWriteSerializer,
     ReviewSerializer,
     CommentSerializer,
+    UserSerializer,
+    UserDetailSerializer,
+    SignUpSerializer,
+    TokenSerializer,
 )
+from .utils import create_confirmation_code, send_email, get_tokens_for_user
 
 
 class UserSignUp(APIView):
     """
     Регистрация новых пользователей и отправка кода подтвержения на почту.
     """
-
     permission_classes = (AllowAny,)
 
     def post(self, request):
@@ -68,16 +74,29 @@ class UserAuth(generics.CreateAPIView):
 
 
 class UsersViewSet(viewsets.ModelViewSet):
-    """Отображение списка пользователей и добавление новых админом."""
+    """Отображение списка пользователей, профиля и добавление новых админом."""
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('username',)
+    pagination_class = LimitOffsetPagination
+    permission_classes = (IsAdmin,)
+    lookup_field = 'username'
 
-
-class UserDetailViewSet(viewsets.ModelViewSet):
-    """Профиль пользователя."""
+    @action(
+        methods=['get', 'patch'],
+        detail=False,
+        permission_classes=(IsOwnerOfProfile,),
+        serializer_class=UserDetailSerializer,
+    )
+    def me(self, request):
+        self.kwargs['username'] = request.user.username
+        if self.request.method == 'PATCH':
+            self.partial_update(request)
+            request.user.refresh_from_db()
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data)
 
 
 class CategoryViewSet(CreateDestroyListMixin):

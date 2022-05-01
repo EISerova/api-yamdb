@@ -34,3 +34,18 @@ class ReviewCommentPermission(BasePermission):
             or request.user.is_admin()
             or request.user.is_moderator()
         )
+
+
+class IsOwnerOfProfile(BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_authenticated
+
+    def has_object_permission(self, request, view, obj):
+        return obj == request.user
+
+
+class IsAdmin(BasePermission):
+    def has_permission(self, request, view):
+        if request.user.is_authenticated:
+            return request.user.is_admin()
+        return False

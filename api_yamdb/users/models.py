@@ -6,7 +6,7 @@ class User(AbstractUser):
     ROLES = (
         ('user', 'user'),
         ('moderator', 'moderator'),
-        ('aadmin', 'admin'),
+        ('admin', 'admin'),
     )
     bio = models.TextField(
         'Биография',
