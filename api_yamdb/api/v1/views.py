@@ -4,10 +4,11 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, filters, status, generics
 from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
+
 from reviews.models import Category, Genre, Review, Title
 from users.models import User
 
@@ -38,8 +39,7 @@ class UserSignUp(APIView):
     """
     Регистрация новых пользователей и отправка кода подтвержения на почту.
     """
-
-    permission_classes = [AllowAny]
+    permission_classes = (AllowAny,)
 
     def post(self, request):
         serializer = SignUpSerializer(data=request.data)
@@ -102,6 +102,7 @@ class UsersViewSet(viewsets.ModelViewSet):
 class CategoryViewSet(CreateDestroyListMixin):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    pagination_class = LimitOffsetPagination
     permission_classes = (IsAdminUserOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
@@ -111,6 +112,7 @@ class CategoryViewSet(CreateDestroyListMixin):
 class GenreViewSet(CreateDestroyListMixin):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
+    pagination_class = LimitOffsetPagination
     permission_classes = (IsAdminUserOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
@@ -119,6 +121,7 @@ class GenreViewSet(CreateDestroyListMixin):
 
 class TitleViewSet(ModelViewSet):
     queryset = Title.objects.annotate(rating=Avg('reviews__score')).all()
+    pagination_class = LimitOffsetPagination
     permission_classes = (IsAdminUserOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
