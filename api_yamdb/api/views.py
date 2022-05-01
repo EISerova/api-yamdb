@@ -33,10 +33,7 @@ from .serializers import (
 from .utils import create_confirmation_code, get_tokens_for_user, send_email
 
 
-class CategoryGenreViewSet(
-    CreateDestroyListMixin,
-    viewsets.GenericViewSet
-):
+class CategoryGenreViewSet(CreateDestroyListMixin, viewsets.GenericViewSet):
     """
     Класс, обеспечивающий базовую функциональность для классов
     CategoryViewSet и GenreViewSet.
