@@ -42,7 +42,7 @@ class IsAuthorAdminModeratorOrReadOnly(BasePermission):
             or request.user.is_moderator()
         )
 
-
+    
 class IsOwnerOfProfile(BasePermission):
     """Класс для ограничения доступа всем, кроме автора."""
 
