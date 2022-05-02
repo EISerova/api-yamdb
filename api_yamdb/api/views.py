@@ -15,7 +15,7 @@ from .permissions import (
     IsAdmin,
     IsAdminUserOrReadOnly,
     IsOwnerOfProfile,
-    ReviewCommentPermission,
+    IsAuthorAdminModeratorOrReadOnly,
 )
 from .serializers import (
     CategorySerializer,
@@ -135,7 +135,7 @@ class ReviewViewSet(ModelViewSet):
     """Обрабатывает запрос к обзорам."""
 
     serializer_class = ReviewSerializer
-    permission_classes = (ReviewCommentPermission,)
+    permission_classes = (IsAuthorAdminModeratorOrReadOnly,)
 
     def get_title(self):
         """Получает из запроса объект Title."""
@@ -157,7 +157,7 @@ class CommentViewSet(ModelViewSet):
     """Обрабатывает запрос к комментариям."""
 
     serializer_class = CommentSerializer
-    permission_classes = (ReviewCommentPermission,)
+    permission_classes = (IsAuthorAdminModeratorOrReadOnly,)
 
     def get_review(self):
         return get_object_or_404(

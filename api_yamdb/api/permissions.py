@@ -4,7 +4,7 @@ from rest_framework.permissions import SAFE_METHODS, BasePermission
 class IsAdminUserOrReadOnly(BasePermission):
     """
     Если запрос безопасный - доступ разрешен,
-    небезопасные запросы доступны только администрации.
+    небезопасные запросы доступны только админу.
     """
 
     message = 'Такие права имеет только админ.'
@@ -17,7 +17,7 @@ class IsAdminUserOrReadOnly(BasePermission):
         return False
 
 
-class ReviewCommentPermission(BasePermission):
+class IsAuthorAdminModeratorOrReadOnly(BasePermission):
     """
     Класс для ограничения доступа к отзывам и комментариям.
     Если запрос безопасный - доступ разрешен,
