@@ -111,12 +111,6 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static/'),)
 
-EMAIL_HOST_USER = 'from@example.com'
-CONFIRMATION_CODE_CHARACTERS = (
-    '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-)
-CONFIRMATION_CODE_LENGTH = 16
-
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
@@ -136,3 +130,9 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=10),
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
+
+EMAIL_HOST_USER = 'from@example.com'
+CONFIRMATION_CODE_CHARACTERS = (
+    '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+)
+CONFIRMATION_CODE_LENGTH = 16

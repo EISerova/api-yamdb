@@ -6,13 +6,15 @@ from .validators import UsernameValidator, validate_year
 
 
 class User(AbstractUser):
+    """Модель пользователей."""
+
     ROLES = (
         ('user', 'user'),
         ('moderator', 'moderator'),
         ('admin', 'admin'),
     )
-
     username_validator = [UsernameValidator]
+
     bio = models.TextField(
         'Биография',
         blank=True,
@@ -35,7 +37,7 @@ class User(AbstractUser):
 
 
 class CategoryGenreModel(models.Model):
-    """Базовая модель для классов Category и Genre."""
+    """Базовый класс для моделей Category и Genre."""
 
     slug = models.SlugField(max_length=50, unique=True, db_index=True)
 

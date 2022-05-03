@@ -1,6 +1,7 @@
 import random
 
 from django.core.mail import send_mail
+
 from rest_framework_simplejwt.tokens import AccessToken
 
 from reviews.models import User
@@ -16,7 +17,7 @@ def create_confirmation_code():
 
     code = ''.join(
         random.choice(CONFIRMATION_CODE_CHARACTERS)
-        for i in range(CONFIRMATION_CODE_LENGTH)
+        for _ in range(CONFIRMATION_CODE_LENGTH)
     )
     return code
 
@@ -26,7 +27,7 @@ def send_email(email, confirmation_code, name):
 
     send_mail(
         'Регистрация на сайте.',
-        f'Здравствуйте, {name}, ваш код подтвердждения: {confirmation_code}.',
+        f'Здравствуйте, {name}, ваш код подтверждения: {confirmation_code}.',
         EMAIL_HOST_USER,
         [email],
         fail_silently=False,
@@ -43,7 +44,7 @@ def get_tokens_for_user(user):
 def get_user(serializer):
     """
     Получение пользователя с задаными данными из сериалайзера.
-    Возвращает None, если такой незарегистрирован.
+    Возвращает None, если такой не зарегистрирован.
     """
 
     try:

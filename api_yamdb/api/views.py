@@ -1,5 +1,6 @@
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
+
 from rest_framework import filters, generics, status
 from rest_framework.decorators import action
 from rest_framework.permissions import (
@@ -172,7 +173,7 @@ class ReviewViewSet(ModelViewSet):
     def perform_create(self, serializer):
         """
         Создает обзор к произведению.
-        Автором обзор автоматически устанавливается пользователь.
+        Автором обзора автоматически устанавливается пользователь.
         """
         serializer.save(author=self.request.user, title=self.get_title())
 
