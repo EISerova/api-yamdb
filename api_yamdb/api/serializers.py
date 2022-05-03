@@ -150,9 +150,10 @@ class ReviewSerializer(serializers.ModelSerializer):
         if self.context.get('request').method != 'POST':
             return data
         title_id = self.context.get('view').kwargs.get('title_id')
+        title = get_object_or_404(Title, id=title_id)
         user = self.context.get('request').user
         message = 'Вы уже оставляли отзыв на это произведение.'
-        if Review.objects.filter(title=title_id, author=user).exists():
+        if Review.objects.filter(title=title, author=user).exists():
             raise serializers.ValidationError(message)
         return data
 
@@ -180,4 +181,3 @@ class CommentSerializer(serializers.ModelSerializer):
             'author',
             'pub_date',
         )
-        read_only_fields = ('review',)

@@ -2,7 +2,7 @@ from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from rest_framework import filters, generics, status
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
@@ -15,7 +15,7 @@ from .permissions import (
     IsAdmin,
     IsAdminUserOrReadOnly,
     IsOwnerOfProfile,
-    ReviewCommentPermission,
+    IsAuthorAdminModeratorOrReadOnly,
 )
 from .serializers import (
     CategorySerializer,
@@ -137,7 +137,10 @@ class ReviewViewSet(ModelViewSet):
     """Обрабатывает запрос к обзорам."""
 
     serializer_class = ReviewSerializer
-    permission_classes = (ReviewCommentPermission,)
+    permission_classes = (
+        IsAuthorAdminModeratorOrReadOnly,
+        IsAuthenticatedOrReadOnly,
+    )
 
     def get_title(self):
         """Получает из запроса объект Title."""
@@ -159,7 +162,10 @@ class CommentViewSet(ModelViewSet):
     """Обрабатывает запрос к комментариям."""
 
     serializer_class = CommentSerializer
-    permission_classes = (ReviewCommentPermission,)
+    permission_classes = (
+        IsAuthorAdminModeratorOrReadOnly,
+        IsAuthenticatedOrReadOnly,
+    )
 
     def get_review(self):
         return get_object_or_404(
