@@ -2,11 +2,10 @@ from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from rest_framework import filters, generics, status
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet
-
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from reviews.models import Category, Genre, Review, Title
 from users.models import User
 from .filters import TitleFilter
@@ -15,6 +14,8 @@ from .permissions import (
     IsAdmin,
     IsAdminUserOrReadOnly,
     ReviewCommentPermission,
+    IsOwnerOfProfile,
+    IsAuthorAdminModeratorOrReadOnly,
 )
 from .serializers import (
     CategorySerializer,
@@ -34,6 +35,15 @@ from .utils import (
     send_email,
     get_user_or_false,
 )
+
+
+class CategoryGenreViewSet(CreateDestroyListMixin, GenericViewSet):
+    """Базовый класс для CategoryViewSet и GenreViewSet."""
+
+    permission_classes = (IsAdminUserOrReadOnly,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+    lookup_field = 'slug'
 
 
 class UserSignUp(APIView):
@@ -116,32 +126,25 @@ class UsersViewSet(ModelViewSet):
         return Response(serializer.data)
 
 
-class CategoryViewSet(CreateDestroyListMixin):
+class CategoryViewSet(CategoryGenreViewSet):
     """Обрабатывает запрос к категориям."""
 
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = (IsAdminUserOrReadOnly,)
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('name',)
-    lookup_field = 'slug'
 
 
-class GenreViewSet(CreateDestroyListMixin):
+class GenreViewSet(CategoryGenreViewSet):
     """Обрабатывает запрос к жанрам."""
 
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    permission_classes = (IsAdminUserOrReadOnly,)
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('name',)
-    lookup_field = 'slug'
 
 
 class TitleViewSet(ModelViewSet):
     """Обрабатывает запрос к произведениям."""
 
     queryset = Title.objects.annotate(rating=Avg('reviews__score')).all()
+    ordering = ['-rating', 'name']
     permission_classes = (IsAdminUserOrReadOnly,)
     filterset_class = TitleFilter
 
@@ -155,7 +158,10 @@ class ReviewViewSet(ModelViewSet):
     """Обрабатывает запрос к обзорам."""
 
     serializer_class = ReviewSerializer
-    permission_classes = (ReviewCommentPermission,)
+    permission_classes = (
+        IsAuthorAdminModeratorOrReadOnly,
+        IsAuthenticatedOrReadOnly,
+    )
 
     def get_title(self):
         """Получает из запроса объект Title."""
@@ -177,7 +183,10 @@ class CommentViewSet(ModelViewSet):
     """Обрабатывает запрос к комментариям."""
 
     serializer_class = CommentSerializer
-    permission_classes = (ReviewCommentPermission,)
+    permission_classes = (
+        IsAuthorAdminModeratorOrReadOnly,
+        IsAuthenticatedOrReadOnly,
+    )
 
     def get_review(self):
         return get_object_or_404(
