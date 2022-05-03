@@ -25,22 +25,22 @@ __________________________
 __________________________
 
 #### Как запустить проект:
-- Клонировать репозиторий:
-```git clone https://github.com/EISerova/api_yamdb```
+- Клонировать репозиторий:\
+```git clone https://github.com/EISerova/api_yamdb```\
 ```cd api_yamdb```
 ----
-- Cоздать и активировать виртуальное окружение:
-```python3 -m venv env```
+- Cоздать и активировать виртуальное окружение:\
+```python3 -m venv env```\
 ```source env/bin/activate```
 ----
-- Установить зависимости из файла requirements.txt:
-```python -m pip install --upgrade pip```
+- Установить зависимости из файла requirements.txt:\
+```python -m pip install --upgrade pip```\
 ```pip install -r requirements.txt```
 ----
-- Выполнить миграции:
+- Выполнить миграции:\
 ```python manage.py migrate```
 ----
-- Запустить проект:
+- Запустить проект:\
 ```python manage.py runserver```
 ______________________
 
