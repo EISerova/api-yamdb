@@ -43,18 +43,6 @@ class ReviewCommentPermission(BasePermission):
         )
 
 
-class IsOwnerOfProfile(BasePermission):
-    """Класс для ограничения доступа всем, кроме автора."""
-
-    message = 'Такие права имеет только автор.'
-
-    def has_permission(self, request, view):
-        return request.user.is_authenticated
-
-    def has_object_permission(self, request, view, obj):
-        return obj == request.user
-
-
 class IsAdmin(BasePermission):
     """Класс для ограничения доступа всем, кроме админа."""
 

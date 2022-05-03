@@ -2,19 +2,18 @@ from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from rest_framework import filters, generics, status
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
+
 from reviews.models import Category, Genre, Review, Title
 from users.models import User
-
 from .filters import TitleFilter
 from .mixins import CreateDestroyListMixin
 from .permissions import (
     IsAdmin,
     IsAdminUserOrReadOnly,
-    IsOwnerOfProfile,
     ReviewCommentPermission,
 )
 from .serializers import (
@@ -29,7 +28,12 @@ from .serializers import (
     UserDetailSerializer,
     UserSerializer,
 )
-from .utils import create_confirmation_code, get_tokens_for_user, send_email
+from .utils import (
+    create_confirmation_code,
+    get_tokens_for_user,
+    send_email,
+    get_user_or_false,
+)
 
 
 class UserSignUp(APIView):
@@ -47,6 +51,14 @@ class UserSignUp(APIView):
             email = serializer.validated_data['email']
             name = serializer.validated_data['username']
             serializer.save(confirmation_code=confirmation_code)
+            send_email(email, confirmation_code, name)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        user = get_user_or_false(serializer)
+        if user:
+            email = user.email
+            name = user.username
+            confirmation_code = user.confirmation_code
             send_email(email, confirmation_code, name)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -67,6 +79,10 @@ class UserAuth(generics.CreateAPIView):
         user = get_object_or_404(
             User, username=serializer.validated_data['username']
         )
+        if request.data['confirmation_code'] != user.confirmation_code:
+            return Response(
+                serializer.data, status=status.HTTP_400_BAD_REQUEST
+            )
         response = get_tokens_for_user(user)
         return Response(response, status=status.HTTP_200_OK)
 
@@ -84,12 +100,16 @@ class UsersViewSet(ModelViewSet):
     @action(
         methods=['get', 'patch'],
         detail=False,
-        permission_classes=(IsOwnerOfProfile,),
+        permission_classes=(IsAuthenticated,),
         serializer_class=UserDetailSerializer,
     )
     def me(self, request):
         self.kwargs['username'] = request.user.username
         if self.request.method == 'PATCH':
+            serializer = self.get_serializer(
+                request.user, data=request.data, partial=True
+            )
+            serializer.is_valid()
             self.partial_update(request)
             request.user.refresh_from_db()
         serializer = self.get_serializer(request.user)

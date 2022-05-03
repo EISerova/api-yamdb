@@ -3,10 +3,19 @@ import random
 from django.core.mail import send_mail
 from rest_framework_simplejwt.tokens import AccessToken
 
+from users.models import User
+from api_yamdb.settings import (
+    EMAIL_HOST_USER,
+    CONFIRMATION_CODE_LENGTH,
+    CONFIRMATION_CODE_CHARACTERS,
+)
+
 
 def create_confirmation_code():
-    alphabet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    code = ''.join(random.choice(alphabet) for i in range(16))
+    code = ''.join(
+        random.choice(CONFIRMATION_CODE_CHARACTERS)
+        for i in range(CONFIRMATION_CODE_LENGTH)
+    )
     return code
 
 
@@ -14,7 +23,7 @@ def send_email(email, confirmation_code, name):
     send_mail(
         'Регистрация на сайте.',
         f'Здравствуйте, {name}, ваш код подтвердждения: {confirmation_code}.',
-        'from@example.com',
+        EMAIL_HOST_USER,
         [email],
         fail_silently=False,
     )
@@ -23,3 +32,15 @@ def send_email(email, confirmation_code, name):
 def get_tokens_for_user(user):
     access = AccessToken.for_user(user)
     return {'token': str(access)}
+
+
+def get_user_or_false(serializer):
+    try:
+        username = serializer.data['username']
+        email = serializer.data['email']
+        user = User.objects.get(username=username, email=email)
+        return user
+    except KeyError:
+        return False
+    except User.DoesNotExist:
+        return False
