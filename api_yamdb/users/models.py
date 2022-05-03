@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from .validators import UsernameValidator
+
 
 class User(AbstractUser):
     ROLES = (
@@ -8,6 +10,9 @@ class User(AbstractUser):
         ('moderator', 'moderator'),
         ('admin', 'admin'),
     )
+
+    username_validator = [UsernameValidator]
+
     bio = models.TextField(
         'Биография',
         blank=True,

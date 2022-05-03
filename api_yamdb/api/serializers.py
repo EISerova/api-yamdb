@@ -1,27 +1,14 @@
-from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
+from django.shortcuts import get_object_or_404
+
 from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import User
+from api_yamdb.settings import CONFIRMATION_CODE_LENGTH
 
 
-class UserSerializer(serializers.ModelSerializer):
-    """Сериализатор для вывода списка юзеров."""
-
-    class Meta:
-        fields = (
-            'username',
-            'email',
-            'role',
-            'first_name',
-            'last_name',
-            'bio',
-        )
-        model = User
-
-
-class UserDetailSerializer(serializers.ModelSerializer):
-    """Сериализатор для просмотра юзером своего профиля."""
+class DefaultUserSerializer(serializers.ModelSerializer):
+    """Базовый сериалайзер для работы с моделью User."""
 
     class Meta:
         fields = (
@@ -33,19 +20,34 @@ class UserDetailSerializer(serializers.ModelSerializer):
             'bio',
         )
         model = User
-        read_only_fields = ('role',)
 
 
-class SignUpSerializer(serializers.ModelSerializer):
-    """Сериализатор для регистрации."""
+class UserSerializer(DefaultUserSerializer):
+    """Сериализатор для просмотра и создания пользователей админом."""
 
     def validate(self, data):
-        if data['username'] == 'me':
+        """Запрет на создание пользователя с username - me."""
+
+        if data.get('username') == 'me':
             raise serializers.ValidationError('Имя пользователя me запрещено.')
         return data
 
-    def create(self, validated_data):
-        return User.objects.create(**validated_data)
+    class Meta:
+        fields = DefaultUserSerializer.Meta.fields
+        model = User
+
+
+class AccountSerializer(DefaultUserSerializer):
+    """Сериализатор для просмотра юзером своего профиля."""
+
+    class Meta:
+        fields = DefaultUserSerializer.Meta.fields
+        read_only_fields = ('role',)
+        model = User
+
+
+class SignUpSerializer(UserSerializer):
+    """Сериализатор для регистрации."""
 
     class Meta:
         fields = (
@@ -59,21 +61,13 @@ class TokenSerializer(serializers.ModelSerializer):
     """Сериализатор для создания токенов."""
 
     username = serializers.CharField(max_length=150)
-    confirmation_code = serializers.CharField(max_length=16)
+    confirmation_code = serializers.CharField(
+        max_length=CONFIRMATION_CODE_LENGTH
+    )
 
     class Meta:
         model = User
         fields = ('username', 'confirmation_code')
-
-    def validate(self, data):
-        """Проверка переданного кода подтверждения."""
-        user = get_object_or_404(User, username=data['username'])
-        confirmation_code = user.confirmation_code
-        if data['confirmation_code'] != confirmation_code:
-            raise serializers.ValidationError(
-                'Передан неверный код подтверждения.'
-            )
-        return data
 
 
 class CategorySerializer(serializers.ModelSerializer):
