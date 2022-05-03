@@ -3,13 +3,14 @@
 <div id="badges">
   <img src="https://img.shields.io/badge/Python-blue?style=for-the-badge&logo=python&logoColor=white" alt="Python Badge"/>  <img src="https://img.shields.io/badge/django-red?style=for-the-badge&logo=django&logoColor=white" alt="django Badge"/>
 </div>
+
 ______________________________
 ##### Описание:
 Учебный проект создан, чтобы вы и другие пользователи могли написать свое мнение о книгах, фильмах, музыке и многом другом.
 Делитесь мнением, оценивайте произведения, смотрите отзывы других. ✨
 ________________________
 
-##### Авторами является команда из трёх начинающих, но отважных программистов:
+##### Авторами является команда из трёх начинающих отважных программистов:
 - [Екатерины Серовой](https://github.com/EISerova/),
 - [Анны Бакарасовой](https://github.com/Bakarasik),
 - [Владимира Мазняка](https://github.com/Cognitoid).
