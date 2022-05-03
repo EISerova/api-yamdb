@@ -5,10 +5,7 @@ from .validators import validate_year
 
 
 class CategoryGenreModel(models.Model):
-    """
-    Класс, обеспечивающий базовую функциональность для классов
-    CategoryViewSet и GenreViewSet.
-    """
+    """Базовая модель для классов Category и Genre."""
 
     slug = models.SlugField(max_length=50, unique=True, db_index=True)
 
@@ -19,9 +16,7 @@ class CategoryGenreModel(models.Model):
 class Genre(CategoryGenreModel):
     """Модель жанров."""
 
-    name = models.TextField(
-        'Название жанра',
-    )
+    name = models.TextField('Название жанра', max_length=256)
 
     class Meta:
         verbose_name = 'Жанр'
@@ -49,7 +44,7 @@ class Title(models.Model):
 
     name = models.TextField('Название произведения', db_index=True)
     description = models.TextField('Описание', null=True, blank=True)
-    year = models.IntegerField('Год', validators=[validate_year])
+    year = models.PositiveSmallIntegerField('Год', validators=[validate_year])
     category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
@@ -81,7 +76,7 @@ class Review(models.Model):
         on_delete=models.CASCADE,
         related_name='reviews',
     )
-    score = models.IntegerField(
+    score = models.PositiveSmallIntegerField(
         'оценка',
     )
     pub_date = models.DateTimeField(

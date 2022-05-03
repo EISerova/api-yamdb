@@ -5,8 +5,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import viewsets
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from reviews.models import Category, Genre, Review, Title
 from users.models import User
 
@@ -33,11 +32,8 @@ from .serializers import (
 from .utils import create_confirmation_code, get_tokens_for_user, send_email
 
 
-class CategoryGenreViewSet(CreateDestroyListMixin, viewsets.GenericViewSet):
-    """
-    Класс, обеспечивающий базовую функциональность для классов
-    CategoryViewSet и GenreViewSet.
-    """
+class CategoryGenreViewSet(CreateDestroyListMixin, GenericViewSet):
+    """Базовый класс для CategoryViewSet и GenreViewSet."""
 
     permission_classes = (IsAdminUserOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
@@ -127,7 +123,7 @@ class TitleViewSet(ModelViewSet):
     """Обрабатывает запрос к произведениям."""
 
     queryset = Title.objects.annotate(rating=Avg('reviews__score')).all()
-    ordering = '-rating'
+    ordering = ['-rating', 'name']
     permission_classes = (IsAdminUserOrReadOnly,)
     filterset_class = TitleFilter
 
