@@ -25,7 +25,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'djoser',
-    'users',
     'reviews',
     'api',
 ]
@@ -65,7 +64,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
 
 # Database
-AUTH_USER_MODEL = 'users.User'
 
 DATABASES = {
     'default': {
@@ -74,9 +72,9 @@ DATABASES = {
     }
 }
 
-# Password validation
+AUTH_USER_MODEL = 'reviews.User'
 
-AUTH_USER_MODEL = 'users.User'
+# Password validation
 
 AUTH_PASSWORD_VALIDATORS = [
     {

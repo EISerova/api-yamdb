@@ -3,7 +3,7 @@ import random
 from django.core.mail import send_mail
 from rest_framework_simplejwt.tokens import AccessToken
 
-from users.models import User
+from reviews.models import User
 from api_yamdb.settings import (
     EMAIL_HOST_USER,
     CONFIRMATION_CODE_LENGTH,

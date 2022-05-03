@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Category, Comment, Genre, Review, Title
+from .models import Category, Comment, Genre, Review, Title, User
 
 
 class GenreClass(admin.ModelAdmin):
@@ -112,8 +112,48 @@ class CommentClass(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
 
+class UserClass(admin.ModelAdmin):
+    """Админка юзеров."""
+
+    list_display = (
+        'id',
+        'password',
+        'last_login',
+        'is_superuser',
+        'username',
+        'first_name',
+        'last_name',
+        'is_staff',
+        'is_active',
+        'bio',
+        'email',
+        'role',
+    )
+    list_filter = (
+        'role',
+        'last_login',
+    )
+    list_editable = (
+        'password',
+        'username',
+        'first_name',
+        'last_name',
+        'is_staff',
+        'bio',
+        'email',
+        'role',
+    )
+    search_fields = (
+        'username',
+        'email',
+        'role',
+    )
+    empty_value_display = '-пусто-'
+
+
 admin.site.register(Genre, GenreClass)
 admin.site.register(Category, CategoryClass)
 admin.site.register(Title, TitleClass)
 admin.site.register(Review, ReviewClass)
 admin.site.register(Comment, CommentClass)
+admin.site.register(User, UserClass)

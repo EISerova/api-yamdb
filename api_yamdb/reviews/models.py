@@ -1,8 +1,37 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 
-from users.models import User
-from .validators import validate_year
+from .validators import UsernameValidator, validate_year
+
+
+class User(AbstractUser):
+    ROLES = (
+        ('user', 'user'),
+        ('moderator', 'moderator'),
+        ('admin', 'admin'),
+    )
+
+    username_validator = [UsernameValidator]
+    bio = models.TextField(
+        'Биография',
+        blank=True,
+    )
+    role = models.CharField(
+        'Роль',
+        max_length=150,
+        default='user',
+        blank=False,
+        choices=ROLES,
+    )
+    email = models.EmailField(blank=False, null=False, unique=True)
+    confirmation_code = models.TextField('Код подтверждения', null=True)
+
+    def is_admin(self):
+        return self.role == 'admin' or self.is_superuser
+
+    def is_moderator(self):
+        return self.role == 'moderator'
 
 
 class CategoryGenreModel(models.Model):
