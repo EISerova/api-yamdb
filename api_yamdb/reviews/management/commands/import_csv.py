@@ -8,9 +8,9 @@ class Command(BaseCommand):
     help = 'Запись в БД данных из csv-файлов'
 
     FILES = {
-        Title: 'titles1.csv',
-        Comment: 'comments.csv',
         User: 'users.csv',
+        Title: 'titles.csv',
+        Comment: 'comments.csv',
         Category: 'category.csv',
         Genre: 'genre.csv',
         Review: 'review.csv',
@@ -55,25 +55,10 @@ class Command(BaseCommand):
             message = f'Ошибка - {error}, проблема в строке - {row}'
             raise CommandError(message)
 
-    def review_create(row):
-        try:
-            Review.objects.get_or_create(
-                id=row['id'],
-                text=row['text'],
-                title_id=row['title_id'],
-                author_id=row['author'],
-                score=row['score'],
-                pub_date=row['pub_date'],
-            )
-        except Exception as error:
-            message = f'Ошибка - {error}, проблема в строке - {row}'
-            raise CommandError(message)
-
     MODEL_CREATE_FUNC = {
         'Review': review_create,
         'Comment': comment_create,
         'Title': title_create,
-        'Review': review_create,
     }
 
     def handle(self, *args, **kwargs):
