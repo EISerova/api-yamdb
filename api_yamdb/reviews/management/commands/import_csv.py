@@ -16,7 +16,7 @@ class Command(BaseCommand):
         Review: 'review.csv',
     }
 
-    def handle(self, *args, **kwargs):
+    def handle(self, *args, **kwargs):  # noqa: C901,
         for model, file in self.FILES.items():
             with open(
                 f'static/data/{file}', 'rt', encoding='utf-8'
@@ -40,7 +40,7 @@ class Command(BaseCommand):
                             )
                             raise CommandError(message)
 
-                elif model._meta.object_name == 'Comment':
+                if model._meta.object_name == 'Comment':
                     for row in csv_reader:
                         try:
                             Comment.objects.get_or_create(
@@ -56,7 +56,7 @@ class Command(BaseCommand):
                             )
                             raise CommandError(message)
 
-                elif model._meta.object_name == 'Title':
+                if model._meta.object_name == 'Title':
                     for row in csv_reader:
                         try:
                             model.objects.get_or_create(
@@ -71,7 +71,7 @@ class Command(BaseCommand):
                             )
                             raise CommandError(message)
 
-                elif model._meta.object_name == 'Review':
+                if model._meta.object_name == 'Review':
                     for row in csv_reader:
                         try:
                             Review.objects.get_or_create(
