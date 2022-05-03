@@ -6,6 +6,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticate
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
+
 from reviews.models import Category, Genre, Review, Title
 from users.models import User
 from .filters import TitleFilter
@@ -13,8 +14,6 @@ from .mixins import CreateDestroyListMixin
 from .permissions import (
     IsAdmin,
     IsAdminUserOrReadOnly,
-    ReviewCommentPermission,
-    IsOwnerOfProfile,
     IsAuthorAdminModeratorOrReadOnly,
 )
 from .serializers import (
@@ -33,7 +32,7 @@ from .utils import (
     create_confirmation_code,
     get_tokens_for_user,
     send_email,
-    get_user_or_false,
+    get_user,
 )
 
 
@@ -64,7 +63,7 @@ class UserSignUp(APIView):
             send_email(email, confirmation_code, name)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-        user = get_user_or_false(serializer)
+        user = get_user(serializer)
         if user:
             email = user.email
             name = user.username
