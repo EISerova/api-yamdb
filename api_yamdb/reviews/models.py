@@ -83,13 +83,11 @@ class ReviewCommentModel(models.Model):
 class Review(ReviewCommentModel):
     """Модель отзывов."""
 
-    title = models.ForeignKey(
-        Title, on_delete=models.CASCADE, related_name='reviews'
-    )
+    title = models.ForeignKey(Title, on_delete=models.CASCADE)
     score = models.PositiveSmallIntegerField(
         'оценка', validators=[MinValueValidator(1), MaxValueValidator(10)]
     )
-    _REPRESENTATION = '{text}, {pub_date}, {author}, {title}, {score}'.format(
+    REPRESENTATION = '{text}, {pub_date}, {author}, {title}, {score}'.format(
         text='self.text[:15]',
         pub_date='self.pub_date',
         author='self.author.username',
@@ -98,13 +96,13 @@ class Review(ReviewCommentModel):
     )
 
     def __str__(self):
-        return self._REPRESENTATION
+        return self.REPRESENTATION
 
     class Meta:
         default_related_name = 'reviews'
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
-        ordering = ('-pub_date',)
+        order_with_respect_to = 'title'
         constraints = [
             models.UniqueConstraint(
                 fields=['author', 'title'], name='author_title_connection'
@@ -118,10 +116,9 @@ class Comment(ReviewCommentModel):
     review = models.ForeignKey(
         Review,
         on_delete=models.CASCADE,
-        related_name='comments',
     )
 
-    _REPRESENTATION = '{text}, {pub_date}, {author}, {review}'.format(
+    REPRESENTATION = '{text}, {pub_date}, {author}, {review}'.format(
         text='self.text[:15]',
         pub_date='self.pub_date',
         author='self.author.username',
@@ -129,10 +126,10 @@ class Comment(ReviewCommentModel):
     )
 
     def __str__(self):
-        return self._REPRESENTATION
+        return self.REPRESENTATION
 
     class Meta:
         default_related_name = 'comments'
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
-        ordering = ('-pub_date',)
+        order_with_respect_to = 'review'

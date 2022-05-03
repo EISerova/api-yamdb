@@ -1,62 +1,71 @@
-#Проект YaMDb
-Создан для того, чтобы вы и другие пользователи могли написать свое мнение о книгах, фильмах, музыке и многом другом. 
+
+# YaMDb
+<div id="badges">
+  <img src="https://img.shields.io/badge/Python-blue?style=for-the-badge&logo=python&logoColor=white" alt="Python Badge"/>  <img src="https://img.shields.io/badge/django-red?style=for-the-badge&logo=django&logoColor=white" alt="django Badge"/>
+</div>
+______________________________
+##### Описание:
+Учебный проект создан, чтобы вы и другие пользователи могли написать свое мнение о книгах, фильмах, музыке и многом другом.
 Делитесь мнением, оценивайте произведения, смотрите отзывы других. ✨
-### Его авторами является команда из трёх отважных программистов: 
-- [Екатерины Серовой](https://github.com/EISerova/), 
-- [Анны Бакарасовой](https://github.com/Bakarasik), 
+________________________
+
+##### Авторами является команда из трёх начинающих, но отважных программистов:
+- [Екатерины Серовой](https://github.com/EISerova/),
+- [Анны Бакарасовой](https://github.com/Bakarasik),
 - [Владимира Мазняка](https://github.com/Cognitoid).
+__________________________
 
-
-
-____
-###Данный проект реализован с помощью: 
+##### Requirements:
 * Python 3.8
 * Django 2.2
 * Django rest framework 3.12
 * JWT 2.1
-### Как запустить проект:
 
-Клонировать репозиторий с помощью 
-```
-git clone  https://github.com/EISerova/api_yamdb
-```
-и перейти в него в командной строке.
+__________________________
 
+#### Как запустить проект:
+- Клонировать репозиторий с помощью
+```git clone https://github.com/EISerova/api_yamdb```
+```cd api_yamdb```
 ----
+- Cоздать и активировать виртуальное окружение:
+```python3 -m venv env```
+```source env/bin/activate```
+----
+- Установить зависимости из файла requirements.txt:
+```python -m pip install --upgrade pip```
+```pip install -r requirements.txt```
+----
+- Выполнить миграции:
+```python manage.py migrate```
+----
+- Запустить проект:
+```python manage.py runserver```
+______________________
 
-Cоздать и активировать виртуальное окружение:
+#### Техническое описание проекта:
+На [странице с документацией](http://127.0.0.1:8000/redoc/) можно ознакомиться с примерами запросов и ответов на них.
+______________________
 
-```
-python3 -m venv env
-```
-
-```
-source env/bin/activate
-```
-
-```
-python3 -m pip install --upgrade pip
-```
-
-Установить зависимости из файла requirements.txt:
-
-```
-pip install -r requirements.txt
+#### Примеры API-запросов:
+ Получение списка всех произведений.
+```mermaid
+graph TD;
+    A[POST] --> B(http://127.0.0.1:8000/api/v1/titles/)
+    B --> C[Response]
+    C --> E[id, name, year, raiting, description, genre, category]
 ```
 
-Выполнить миграции:
+Добавить новый отзыв к произведению с id 1.
+```mermaid
+graph TD;
+A[POST] --> B(http://127.0.0.1:8000/api/v1/titles/1/reviews/)
+B --> C[Response]
+C --> D[id, text, author, score, pub_date]
+```
+______________________
 
-```
-python3 manage.py migrate
-```
-
-Запустить проект:
-
-```
-python3 manage.py runserver
-```
-Далее на [странице с документацией](http://127.0.0.1:8000/redoc/) можно ознакомиться с примерами запросов и ответов на них.
-____
-Для регистрации пользователь может самостоятельно отправить свой username и email на [/auth/signup/](http://127.0.0.1:8000/api/v1/auth/signup/). После этого он получает письмо с кодом подтвержения. 
+#### Регистрация:
+Для регистрации пользователь может самостоятельно отправить свой username и email на [/auth/signup/](http://127.0.0.1:8000/api/v1/auth/signup/). После этого он получает письмо с кодом подтверждения.  
 
 Далее необходимо получить токен для аутентификации, использовав код и передав его вместе с username по адресу [/auth/token/](http://127.0.0.1:8000/api/v1/auth/token/).
