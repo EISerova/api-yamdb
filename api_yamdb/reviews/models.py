@@ -2,15 +2,22 @@ from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 from users.models import User
-from .validators import validate_score
+from .validators import validate_year
 
 
-class Genre(models.Model):
+class CategoryGenreModel(models.Model):
+    """Базовая модель для классов Category и Genre."""
+
+    slug = models.SlugField(max_length=50, unique=True, db_index=True)
+
+    class Meta:
+        abstract = True
+
+
+class Genre(CategoryGenreModel):
     """Модель жанров."""
 
-    slug = models.SlugField(unique=True, db_index=True)
-    name = models.CharField('Жанр', max_length=30)
-    description = models.CharField('Описание', max_length=200)
+    name = models.TextField('Название жанра', max_length=256)
 
     class Meta:
         verbose_name = 'Жанр'
@@ -20,11 +27,10 @@ class Genre(models.Model):
         return f'Название - {self.name}'
 
 
-class Category(models.Model):
+class Category(CategoryGenreModel):
     """Модель категорий."""
 
-    slug = models.SlugField(unique=True, db_index=True)
-    name = models.CharField('Категория', max_length=20)
+    name = models.CharField('Название категории', max_length=256)
 
     class Meta:
         verbose_name = 'Категория'
@@ -37,13 +43,9 @@ class Category(models.Model):
 class Title(models.Model):
     """Модель произведений."""
 
-    name = models.CharField('Название', max_length=200, db_index=True)
-    description = models.TextField(
-        'Описание', max_length=255, null=True, blank=True
-    )
-    year = models.IntegerField(
-        'Год',
-    )
+    name = models.TextField('Название произведения', db_index=True)
+    description = models.TextField('Описание', null=True, blank=True)
+    year = models.PositiveSmallIntegerField('Год', validators=[validate_year])
     category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
