@@ -26,7 +26,7 @@ from .serializers import (
     TitleReadSerializer,
     TitleWriteSerializer,
     TokenSerializer,
-    UserDetailSerializer,
+    AccountSerializer,
     UserSerializer,
 )
 from .utils import (
@@ -111,7 +111,7 @@ class UsersViewSet(ModelViewSet):
         methods=['get', 'patch'],
         detail=False,
         permission_classes=(IsAuthenticated,),
-        serializer_class=UserDetailSerializer,
+        serializer_class=AccountSerializer,
     )
     def me(self, request):
         self.kwargs['username'] = request.user.username

@@ -3,9 +3,12 @@ from rest_framework.relations import SlugRelatedField
 
 from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import User
+from api_yamdb.settings import CONFIRMATION_CODE_LENGTH
 
 
 class DefaultUserSerializer(serializers.ModelSerializer):
+    """Базовый сериалайзер для работы с моделью User."""
+
     class Meta:
         fields = (
             'username',
@@ -19,9 +22,11 @@ class DefaultUserSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(DefaultUserSerializer):
-    """Сериализатор для вывода списка юзеров."""
+    """Сериализатор для просмотра и создания пользователей админом."""
 
     def validate(self, data):
+        """Запрет на создание пользователя с username - me."""
+
         if data.get('username') == 'me':
             raise serializers.ValidationError('Имя пользователя me запрещено.')
         return data
@@ -31,7 +36,7 @@ class UserSerializer(DefaultUserSerializer):
         model = User
 
 
-class UserDetailSerializer(DefaultUserSerializer):
+class AccountSerializer(DefaultUserSerializer):
     """Сериализатор для просмотра юзером своего профиля."""
 
     class Meta:
@@ -55,13 +60,13 @@ class TokenSerializer(serializers.ModelSerializer):
     """Сериализатор для создания токенов."""
 
     username = serializers.CharField(max_length=150)
-    confirmation_code = serializers.CharField(max_length=16)
+    confirmation_code = serializers.CharField(
+        max_length=CONFIRMATION_CODE_LENGTH
+    )
 
     class Meta:
         model = User
         fields = ('username', 'confirmation_code')
-
-
 
 
 class CategorySerializer(serializers.ModelSerializer):
