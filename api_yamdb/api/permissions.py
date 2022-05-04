@@ -18,17 +18,21 @@ class IsAdminUserOrReadOnly(BasePermission):
 
 
 class IsAuthorAdminModeratorOrReadOnly(BasePermission):
+    """
+    Класс для ограничения доступа к отзывам и комментариям.
+    Если запрос безопасный - доступ разрешен,
+    небезопасные запросы доступны только администрации или автору.
+    """
+
     message = 'Нет прав для изменения/удаления отзыва или комментария.'
 
     def has_object_permission(self, request, view, obj):
-        if request.user.is_authenticated:
-            return (
-                request.method in SAFE_METHODS
-                or obj.author == request.user
-                or request.user.is_admin()
-                or request.user.is_moderator()
-            )
-        return False
+        return (
+            request.method in SAFE_METHODS
+            or obj.author == request.user
+            or request.user.is_admin()
+            or request.user.is_moderator()
+        )
 
 
 class IsAdmin(BasePermission):

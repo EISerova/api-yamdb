@@ -1,8 +1,6 @@
-from dataclasses import dataclass, asdict
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
-
 
 from .validators import UsernameValidator, validate_year
 
@@ -113,40 +111,31 @@ class ReviewCommentModel(models.Model):
 
     class Meta:
         abstract = True
-        ordering = [-'pub_date']
 
 
-@dataclass
 class Review(ReviewCommentModel):
     """Модель отзывов."""
 
-    title = models.ForeignKey(
-        Title,
-        on_delete=models.CASCADE,
-        verbose_name="Произведение",
-    )
+    title = models.ForeignKey(Title, on_delete=models.CASCADE)
     score = models.PositiveSmallIntegerField(
-        'оценка',
-        validators=[
-            MinValueValidator(1),
-            MaxValueValidator(10),
-        ],
+        'оценка', validators=[MinValueValidator(1), MaxValueValidator(10)]
     )
-    FIELDS_INFO = (
-        'Текст: {text};'
-        'Дата публикации: {pub_date};'
-        'Автор: {author.username};'
-        'Произведение: {title};'
-        'Оценка: {score}.'
+    REPRESENTATION = '{text}, {pub_date}, {author}, {title}, {score}'.format(
+        text='self.text[:15]',
+        pub_date='self.pub_date',
+        author='self.author.username',
+        title='self.title',
+        score='self.score',
     )
 
     def __str__(self):
-        return self.FIELDS_INFO.format(**asdict(self))
+        return self.REPRESENTATION
 
     class Meta:
         default_related_name = 'reviews'
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
+        order_with_respect_to = 'title'
         constraints = [
             models.UniqueConstraint(
                 fields=['author', 'title'], name='author_title_connection'
@@ -162,15 +151,15 @@ class Comment(ReviewCommentModel):
         on_delete=models.CASCADE,
     )
 
-    FIELDS_INFO = (
-        'Текст: {text};'
-        'Дата публикации: {pub_date};'
-        'Автор: {author.username};'
-        'Обзор: {review};'
+    REPRESENTATION = '{text}, {pub_date}, {author}, {review}'.format(
+        text='self.text[:15]',
+        pub_date='self.pub_date',
+        author='self.author.username',
+        review='self.review',
     )
 
     def __str__(self):
-        return self.FIELDS_INFO.format(**asdict(self))
+        return self.REPRESENTATION
 
     class Meta:
         default_related_name = 'comments'
