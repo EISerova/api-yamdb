@@ -1,6 +1,8 @@
+from dataclasses import dataclass, asdict
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
+
 
 from .validators import UsernameValidator, validate_year
 
@@ -107,7 +109,6 @@ class ReviewCommentModel(models.Model):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        verbose_name="автор",
     )
 
     class Meta:
@@ -119,9 +120,17 @@ class ReviewCommentModel(models.Model):
 class Review(ReviewCommentModel):
     """Модель отзывов."""
 
-    title = models.ForeignKey(Title, on_delete=models.CASCADE, verbose_name="Произведение",)
+    title = models.ForeignKey(
+        Title,
+        on_delete=models.CASCADE,
+        verbose_name="Произведение",
+    )
     score = models.PositiveSmallIntegerField(
-        'оценка', validators=[MinValueValidator(1), MaxValueValidator(10),]
+        'оценка',
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(10),
+        ],
     )
     FIELDS_INFO = (
         'Текст: {text};'
@@ -130,7 +139,7 @@ class Review(ReviewCommentModel):
         'Произведение: {title};'
         'Оценка: {score}.'
     )
-    
+
     def __str__(self):
         return self.FIELDS_INFO.format(**asdict(self))
 
@@ -153,13 +162,13 @@ class Comment(ReviewCommentModel):
         on_delete=models.CASCADE,
     )
 
-    FIELDS_INFO = = (
+    FIELDS_INFO = (
         'Текст: {text};'
         'Дата публикации: {pub_date};'
         'Автор: {author.username};'
         'Обзор: {review};'
     )
-    
+
     def __str__(self):
         return self.FIELDS_INFO.format(**asdict(self))
 
@@ -167,3 +176,4 @@ class Comment(ReviewCommentModel):
         default_related_name = 'comments'
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
+        order_with_respect_to = 'review'

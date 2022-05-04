@@ -1,5 +1,9 @@
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
+<<<<<<< HEAD
+=======
+
+>>>>>>> 97bfcf971e1c94b5f0813efb533c4026f325bafd
 from rest_framework import filters, generics, status
 from rest_framework.decorators import action
 from rest_framework.permissions import (
