@@ -7,13 +7,16 @@ from reviews.models import Category, Genre, Review, Title, Comment, User
 class Command(BaseCommand):
     help = 'Запись в БД данных из csv-файлов'
 
-    FILES = {
-        User: 'users.csv',
+    TABLES_FOR_SERIES = {
         Title: 'titles.csv',
         Comment: 'comments.csv',
+        Review: 'review.csv',
+    }
+
+    TABLES_FOR_BULK = {
+        User: 'users.csv',
         Category: 'category.csv',
         Genre: 'genre.csv',
-        Review: 'review.csv',
     }
 
     def review_create(row):
@@ -62,7 +65,7 @@ class Command(BaseCommand):
     }
 
     def handle(self, *args, **kwargs):
-        for model, file in self.FILES.items():
+        for model, file in self.TABLES_FOR_SERIES.items():
             with open(
                 f'static/data/{file}', 'rt', encoding='utf-8'
             ) as csv_file:
@@ -72,6 +75,16 @@ class Command(BaseCommand):
                     if model._meta.object_name == name:
                         for row in csv_reader:
                             func(row)
+
+                self.stdout.write(
+                    f'Данные из файлов перенесены в базу {model}.'
+                )
+
+        for model, file in self.TABLES_FOR_BULK.items():
+            with open(
+                f'static/data/{file}', 'rt', encoding='utf-8'
+            ) as csv_file:
+                csv_reader = csv.DictReader(csv_file)
                 try:
                     model.objects.bulk_create(
                         model(**row) for row in csv_reader
