@@ -4,10 +4,11 @@ from rest_framework.relations import SlugRelatedField
 
 from api_yamdb.settings import CONFIRMATION_CODE_LENGTH
 from reviews.models import Category, Comment, Genre, Review, Title, User
+from .mixins import UsernameValidationMixin
 
 
-class DefaultUserSerializer(serializers.ModelSerializer):
-    """Базовый сериалайзер для работы с моделью User."""
+class UserSerializer(serializers.ModelSerializer):
+    """Сериализатор для просмотра и создания пользователей админом."""
 
     class Meta:
         fields = (
@@ -21,28 +22,10 @@ class DefaultUserSerializer(serializers.ModelSerializer):
         model = User
 
 
-class UserSerializer(DefaultUserSerializer):
-    """Сериализатор для просмотра и создания пользователей админом."""
-
-    def validate(self, data):
-        """Запрет на создание пользователя с username - me."""
-
-        if data.get('username') == 'me':
-            raise serializers.ValidationError('Имя пользователя me запрещено.')
-        return data
-
-    class Meta:
-        fields = DefaultUserSerializer.Meta.fields
-        model = User
-
-
-class AccountSerializer(DefaultUserSerializer):
+class AccountSerializer(UserSerializer):
     """Сериализатор для просмотра юзером своего профиля."""
 
-    class Meta:
-        fields = DefaultUserSerializer.Meta.fields
-        read_only_fields = ('role',)
-        model = User
+    role = serializers.CharField(max_length=9, read_only=True)
 
 
 class SignUpSerializer(UserSerializer):
@@ -56,17 +39,13 @@ class SignUpSerializer(UserSerializer):
         model = User
 
 
-class TokenSerializer(serializers.ModelSerializer):
+class TokenSerializer(serializers.Serializer, UsernameValidationMixin):
     """Сериализатор для создания токенов."""
 
     username = serializers.CharField(max_length=150)
     confirmation_code = serializers.CharField(
         max_length=CONFIRMATION_CODE_LENGTH
     )
-
-    class Meta:
-        model = User
-        fields = ('username', 'confirmation_code')
 
 
 class CategorySerializer(serializers.ModelSerializer):
