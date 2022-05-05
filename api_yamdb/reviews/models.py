@@ -40,9 +40,13 @@ class CategoryGenreModel(models.Model):
     """Базовый класс для моделей Category и Genre."""
 
     slug = models.SlugField('слаг', max_length=50, unique=True, db_index=True)
+    name = models.TextField()
 
     class Meta:
         abstract = True
+
+    def __str__(self):
+        return f'Название - {self.name}'
 
 
 class Genre(CategoryGenreModel):
@@ -54,9 +58,6 @@ class Genre(CategoryGenreModel):
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанры'
 
-    def __str__(self):
-        return f'Название - {self.name}'
-
 
 class Category(CategoryGenreModel):
     """Модель категорий."""
@@ -66,9 +67,6 @@ class Category(CategoryGenreModel):
     class Meta:
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
-
-    def __str__(self):
-        return f'Название - {self.name}'
 
 
 class Title(models.Model):
