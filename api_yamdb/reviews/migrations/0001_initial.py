@@ -53,7 +53,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('slug', models.SlugField(unique=True, verbose_name='слаг')),
-                ('name', models.TextField(max_length=256)),
+                ('name', models.CharField(max_length=256, verbose_name='Название категории')),
+
             ],
             options={
                 'verbose_name': 'Категория',
@@ -65,7 +66,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('slug', models.SlugField(unique=True, verbose_name='слаг')),
-                ('name', models.TextField(max_length=256)),
+                ('name', models.TextField(max_length=256, verbose_name='Название жанра')),
+
             ],
             options={
                 'verbose_name': 'Жанр',
