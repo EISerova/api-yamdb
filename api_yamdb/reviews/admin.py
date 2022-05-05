@@ -3,6 +3,46 @@ from django.contrib import admin
 from .models import Category, Comment, Genre, Review, Title, User
 
 
+@admin.register(User)
+class UserClass(admin.ModelAdmin):
+    """Админка юзеров."""
+
+    list_display = (
+        'id',
+        'password',
+        'last_login',
+        'is_superuser',
+        'username',
+        'first_name',
+        'last_name',
+        'is_staff',
+        'is_active',
+        'bio',
+        'email',
+        'role',
+    )
+    list_filter = (
+        'role',
+        'last_login',
+    )
+    list_editable = (
+        'password',
+        'username',
+        'first_name',
+        'last_name',
+        'is_staff',
+        'bio',
+        'email',
+        'role',
+    )
+    search_fields = (
+        'username',
+        'email',
+        'role',
+    )
+    empty_value_display = '-пусто-'
+
+
 @admin.register(Genre)
 class GenreClass(admin.ModelAdmin):
     """Админка жанров."""
@@ -113,45 +153,5 @@ class CommentClass(admin.ModelAdmin):
         'review',
         'author',
         'pub_date',
-    )
-    empty_value_display = '-пусто-'
-
-
-@admin.register(User)
-class UserClass(admin.ModelAdmin):
-    """Админка юзеров."""
-
-    list_display = (
-        'id',
-        'password',
-        'last_login',
-        'is_superuser',
-        'username',
-        'first_name',
-        'last_name',
-        'is_staff',
-        'is_active',
-        'bio',
-        'email',
-        'role',
-    )
-    list_filter = (
-        'role',
-        'last_login',
-    )
-    list_editable = (
-        'password',
-        'username',
-        'first_name',
-        'last_name',
-        'is_staff',
-        'bio',
-        'email',
-        'role',
-    )
-    search_fields = (
-        'username',
-        'email',
-        'role',
     )
     empty_value_display = '-пусто-'
