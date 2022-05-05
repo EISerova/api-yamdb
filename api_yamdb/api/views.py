@@ -126,7 +126,7 @@ class UsersViewSet(ModelViewSet):
             serializer = self.get_serializer(
                 request.user, data=request.data, partial=True
             )
-            serializer.is_valid()
+            serializer.is_valid(raise_exception=True)
             self.partial_update(request)
             request.user.refresh_from_db()
         serializer = self.get_serializer(request.user)
