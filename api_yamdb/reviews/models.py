@@ -1,3 +1,5 @@
+from dataclasses import dataclass, asdict
+
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -118,20 +120,30 @@ class ReviewCommentModel(models.Model):
 class Review(ReviewCommentModel):
     """Модель отзывов."""
 
-    title = models.ForeignKey(Title, on_delete=models.CASCADE)
+    title = models.ForeignKey(
+        Title,
+        on_delete=models.CASCADE,
+        verbose_name="произведение",
+    )
     score = models.PositiveSmallIntegerField(
         'оценка', validators=[MinValueValidator(1), MaxValueValidator(10)]
     )
-    REPRESENTATION = '{text}, {pub_date}, {author}, {title}, {score}'.format(
-        text='self.text[:15]',
-        pub_date='self.pub_date',
-        author='self.author.username',
-        title='self.title',
-        score='self.score',
+    FIELDS_INFO = (
+        'Текст: {text};'
+        'Дата публикации: {pub_date};'
+        'Автор: {author};'
+        'Произведение: {title};'
+        'Оценка: {score}.'
     )
 
     def __str__(self):
-        return self.REPRESENTATION
+        return self.FIELDS_INFO.format(
+            text=self.text,
+            pub_date=self.pub_date,
+            author=self.author.username,
+            title=self.title,
+            score=self.score,
+        )
 
     class Meta:
         default_related_name = 'reviews'
@@ -153,15 +165,20 @@ class Comment(ReviewCommentModel):
         verbose_name="обзор",
     )
 
-    REPRESENTATION = '{text}, {pub_date}, {author}, {review}'.format(
-        text='self.text[:15]',
-        pub_date='self.pub_date',
-        author='self.author.username',
-        review='self.review',
+    FIELDS_INFO = (
+        'Текст: {text};'
+        'Дата публикации: {pub_date};'
+        'Автор: {author};'
+        'Обзор: {review};'
     )
 
     def __str__(self):
-        return self.REPRESENTATION
+        return self.FIELDS_INFO.format(
+            text=self.text,
+            pub_date=self.pub_date,
+            author=self.author.username,
+            review=self.review,
+        )
 
     class Meta:
         default_related_name = 'comments'
