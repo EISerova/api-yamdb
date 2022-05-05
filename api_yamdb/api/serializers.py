@@ -4,6 +4,7 @@ from rest_framework.relations import SlugRelatedField
 
 from api_yamdb.settings import CONFIRMATION_CODE_LENGTH
 from reviews.models import Category, Comment, Genre, Review, Title, User
+from reviews.validators import validate_username_not_me, RegexUsernameValidator
 from .mixins import UsernameValidationMixin
 
 
@@ -29,11 +30,14 @@ class AccountSerializer(UserSerializer):
     username = serializers.CharField(max_length=150, read_only=True)
 
 
-class SignUpSerializer(serializers.Serializer, UsernameValidationMixin):
+class SignUpSerializer(serializers.Serializer):
     """Сериализатор для регистрации."""
 
     username = serializers.CharField(
-        max_length=150, allow_blank=False, allow_null=False
+        max_length=150,
+        allow_blank=False,
+        allow_null=False,
+        validators=[validate_username_not_me, RegexUsernameValidator],
     )
     email = serializers.EmailField(
         max_length=254, allow_blank=False, allow_null=False
@@ -43,11 +47,14 @@ class SignUpSerializer(serializers.Serializer, UsernameValidationMixin):
         return User.objects.create(**validated_data)
 
 
-class TokenSerializer(serializers.Serializer, UsernameValidationMixin):
+class TokenSerializer(serializers.Serializer):
     """Сериализатор для создания токенов."""
 
     username = serializers.CharField(
-        max_length=150, allow_blank=False, allow_null=False
+        max_length=150,
+        allow_blank=False,
+        allow_null=False,
+        validators=[validate_username_not_me, RegexUsernameValidator],
     )
     confirmation_code = serializers.CharField(
         max_length=CONFIRMATION_CODE_LENGTH,
