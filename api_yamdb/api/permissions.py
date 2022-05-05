@@ -2,13 +2,6 @@ from rest_framework.permissions import SAFE_METHODS, BasePermission
 
 
 class IsAdminUserOrReadOnly(BasePermission):
-    """
-    Если запрос безопасный - доступ разрешен,
-    небезопасные запросы доступны только админу.
-    """
-
-    message = 'Такие права имеет только админ.'
-
     def has_permission(self, request, view):
         if request.method in SAFE_METHODS:
             return True
@@ -32,7 +25,7 @@ class IsAuthorAdminModeratorOrReadOnly(BasePermission):
 
 
 class IsAdmin(BasePermission):
-    """Класс для ограничения доступа всем, кроме админа."""
+    message = 'Такие права имеет только админ.'
 
     def has_permission(self, request, view):
         if request.user.is_authenticated:
