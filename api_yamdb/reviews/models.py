@@ -1,5 +1,3 @@
-from dataclasses import dataclass, asdict
-
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -28,7 +26,7 @@ class User(AbstractUser):
         blank=False,
         choices=ROLES,
     )
-    email = models.EmailField(blank=False, null=False, unique=True)
+    email = models.EmailField('почта', blank=False, null=False, unique=True)
     confirmation_code = models.TextField('Код подтверждения', null=True)
 
     def is_admin(self):
@@ -41,7 +39,7 @@ class User(AbstractUser):
 class CategoryGenreModel(models.Model):
     """Базовый класс для моделей Category и Genre."""
 
-    slug = models.SlugField(max_length=50, unique=True, db_index=True)
+    slug = models.SlugField('слаг', max_length=50, unique=True, db_index=True)
 
     class Meta:
         abstract = True
@@ -85,6 +83,7 @@ class Title(models.Model):
         null=True,
         related_name='titles',
         blank=False,
+        verbose_name="категория",
     )
     genre = models.ManyToManyField(Genre, related_name='titles', blank=False)
 
