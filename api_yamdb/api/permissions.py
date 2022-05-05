@@ -21,15 +21,14 @@ class IsAuthorAdminModeratorOrReadOnly(BasePermission):
     message = 'Нет прав для изменения/удаления отзыва или комментария.'
 
     def has_object_permission(self, request, view, obj):
-        is_safe_method = request.method in SAFE_METHODS
         if request.user.is_authenticated:
             return (
-                is_safe_method
+                request.method in SAFE_METHODS
                 or obj.author == request.user
                 or request.user.is_admin()
                 or request.user.is_moderator()
             )
-        return is_safe_method
+        return request.method in SAFE_METHODS
 
 
 class IsAdmin(BasePermission):
