@@ -28,23 +28,24 @@ class AccountSerializer(UserSerializer):
     role = serializers.CharField(max_length=9, read_only=True)
 
 
-class SignUpSerializer(UserSerializer):
+class SignUpSerializer(serializers.Serializer, UsernameValidationMixin):
     """Сериализатор для регистрации."""
 
-    class Meta:
-        fields = (
-            'username',
-            'email',
-        )
-        model = User
+    username = serializers.CharField(max_length=150, allow_blank=False, allow_null=False)
+    email = serializers.EmailField(max_length=254, allow_blank=False, allow_null=False)
+
+    def create(self, validated_data):
+        return User.objects.create(**validated_data)
 
 
 class TokenSerializer(serializers.Serializer, UsernameValidationMixin):
     """Сериализатор для создания токенов."""
 
-    username = serializers.CharField(max_length=150)
+    username = serializers.CharField(max_length=150, allow_blank=False, allow_null=False)
     confirmation_code = serializers.CharField(
-        max_length=CONFIRMATION_CODE_LENGTH
+        max_length=CONFIRMATION_CODE_LENGTH,
+        allow_blank=False,
+        allow_null=False
     )
 
 

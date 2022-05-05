@@ -12,9 +12,9 @@ class CreateDestroyListMixin(
 
 class UsernameValidationMixin(serializers.BaseSerializer):
 
-    def validate(self, data):
+    def validate_username(self, value):
         """Запрет на создание пользователя с username - me."""
 
-        if data.get('username') == 'me':
+        if value == 'me':
             raise serializers.ValidationError('Имя пользователя me запрещено.')
-        return data
+        return value
