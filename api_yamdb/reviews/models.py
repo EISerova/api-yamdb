@@ -2,7 +2,11 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
-from .validators import validate_year, validate_username_not_me, RegexUsernameValidator
+from .validators import (
+    validate_year,
+    validate_username_not_me,
+    RegexUsernameValidator,
+)
 
 
 class User(AbstractUser):
@@ -16,7 +20,7 @@ class User(AbstractUser):
     username = models.CharField(
         max_length=150,
         unique=True,
-        validators=[RegexUsernameValidator, validate_username_not_me]
+        validators=[RegexUsernameValidator, validate_username_not_me],
     )
     first_name = models.CharField(max_length=150, blank=True)
     last_name = models.CharField(max_length=150, blank=True)
@@ -31,7 +35,9 @@ class User(AbstractUser):
         blank=False,
         choices=ROLES,
     )
-    email = models.EmailField('почта', max_length=254, blank=False, null=False, unique=True)
+    email = models.EmailField(
+        'почта', max_length=254, blank=False, null=False, unique=True
+    )
     confirmation_code = models.TextField('Код подтверждения', null=True)
 
     def is_admin(self):

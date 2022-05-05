@@ -36,7 +36,7 @@ from .utils import (
     get_tokens_for_user,
     get_user,
     send_email,
-    check_username_email
+    check_username_email,
 )
 
 
@@ -71,7 +71,9 @@ class UserSignUp(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         if check_username_email(username, email):
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
 
         confirmation_code = create_confirmation_code()
         serializer.validated_data['email'] = email.lower()
@@ -127,6 +129,7 @@ class UsersViewSet(ModelViewSet):
                 request.user, data=request.data, partial=True
             )
             serializer.is_valid(raise_exception=True)
+
             self.partial_update(request)
             request.user.refresh_from_db()
         serializer = self.get_serializer(request.user)
