@@ -1,6 +1,7 @@
 from datetime import datetime
-from django.core.exceptions import ValidationError
+
 from django.contrib.auth.validators import UnicodeUsernameValidator
+from django.core.exceptions import ValidationError
 
 
 class UsernameValidator(UnicodeUsernameValidator):
