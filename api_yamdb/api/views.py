@@ -20,6 +20,7 @@ from .permissions import (
     IsAuthorAdminModeratorOrReadOnly,
 )
 from .serializers import (
+    AccountSerializer,
     CategorySerializer,
     CommentSerializer,
     GenreSerializer,
@@ -28,14 +29,13 @@ from .serializers import (
     TitleReadSerializer,
     TitleWriteSerializer,
     TokenSerializer,
-    AccountSerializer,
     UserSerializer,
 )
 from .utils import (
     create_confirmation_code,
     get_tokens_for_user,
-    send_email,
     get_user,
+    send_email,
 )
 
 
