@@ -13,7 +13,16 @@ class User(AbstractUser):
         ('moderator', 'moderator'),
         ('admin', 'admin'),
     )
-    username_validator = [UsernameValidator]
+
+    username_validator = UsernameValidator()
+    username = models.CharField(
+        max_length=150,
+        unique=True,
+        validators=[username_validator],
+    )
+
+    first_name = models.CharField(max_length=150, blank=True)
+    last_name = models.CharField(max_length=150, blank=True)
 
     bio = models.TextField(
         'Биография',
@@ -26,7 +35,7 @@ class User(AbstractUser):
         blank=False,
         choices=ROLES,
     )
-    email = models.EmailField('почта', blank=False, null=False, unique=True)
+    email = models.EmailField('Почта', max_length=254, blank=False, null=False, unique=True)
     confirmation_code = models.TextField('Код подтверждения', null=True)
 
     def is_admin(self):
