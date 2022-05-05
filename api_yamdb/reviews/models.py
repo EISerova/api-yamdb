@@ -107,6 +107,7 @@ class ReviewCommentModel(models.Model):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
+        verbose_name="автор",
     )
 
     class Meta:
@@ -149,6 +150,7 @@ class Comment(ReviewCommentModel):
     review = models.ForeignKey(
         Review,
         on_delete=models.CASCADE,
+        verbose_name="обзор",
     )
 
     REPRESENTATION = '{text}, {pub_date}, {author}, {review}'.format(
