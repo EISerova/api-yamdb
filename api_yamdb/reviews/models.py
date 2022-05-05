@@ -12,6 +12,9 @@ from .validators import (
 class User(AbstractUser):
     """Модель пользователей."""
 
+    USER = 'user'
+    MODERATOR = 'moderator'
+    ADMIN = 'admin'
     ROLES = (
         ('user', 'user'),
         ('moderator', 'moderator'),
@@ -31,7 +34,7 @@ class User(AbstractUser):
     role = models.CharField(
         'Роль',
         max_length=9,
-        default='user',
+        default=USER,
         blank=False,
         choices=ROLES,
     )
@@ -41,10 +44,10 @@ class User(AbstractUser):
     confirmation_code = models.TextField('Код подтверждения', null=True)
 
     def is_admin(self):
-        return self.role == 'admin' or self.is_superuser
+        return self.role == self.ADMIN or self.is_superuser or self.is_staff
 
     def is_moderator(self):
-        return self.role == 'moderator'
+        return self.role == self.MODERATOR
 
 
 class CategoryGenreModel(models.Model):
