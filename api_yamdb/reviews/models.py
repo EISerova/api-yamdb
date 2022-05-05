@@ -39,8 +39,8 @@ class User(AbstractUser):
 class CategoryGenreModel(models.Model):
     """Базовый класс для моделей Category и Genre."""
 
-    slug = models.SlugField('слаг', max_length=50, unique=True, db_index=True)
-    name = models.TextField(max_length=256)
+    slug = models.SlugField('Cлаг', max_length=50, unique=True, db_index=True)
+    name = models.TextField('Название', max_length=256)
 
     class Meta:
         abstract = True
