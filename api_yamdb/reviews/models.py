@@ -112,6 +112,7 @@ class ReviewCommentModel(models.Model):
 
     class Meta:
         abstract = True
+        ordering = ['-pub_date']
 
 
 class Review(ReviewCommentModel):
@@ -136,7 +137,6 @@ class Review(ReviewCommentModel):
         default_related_name = 'reviews'
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
-        order_with_respect_to = 'title'
         constraints = [
             models.UniqueConstraint(
                 fields=['author', 'title'], name='author_title_connection'
@@ -167,4 +167,3 @@ class Comment(ReviewCommentModel):
         default_related_name = 'comments'
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
-        order_with_respect_to = 'review'
