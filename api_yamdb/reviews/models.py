@@ -7,6 +7,7 @@ from .validators import (
     validate_year,
     validate_username_not_me,
 )
+from api_yamdb.settings import CONFIRMATION_CODE_LENGTH
 
 
 class User(AbstractUser):
@@ -41,7 +42,9 @@ class User(AbstractUser):
     email = models.EmailField(
         'почта', max_length=254, blank=False, null=False, unique=True
     )
-    confirmation_code = models.TextField('Код подтверждения', null=True)
+    confirmation_code = models.CharField(
+        'Код подтверждения', max_length=CONFIRMATION_CODE_LENGTH, null=True
+    )
 
     def is_admin(self):
         return self.role == self.ADMIN or self.is_superuser or self.is_staff
