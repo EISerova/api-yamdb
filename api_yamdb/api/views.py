@@ -123,15 +123,15 @@ class UsersViewSet(ModelViewSet):
         serializer_class=AccountSerializer,
     )
     def me(self, request):
-        self.kwargs['username'] = request.user.username
         if self.request.method == 'PATCH':
             serializer = self.get_serializer(
                 request.user, data=request.data, partial=True
             )
             serializer.is_valid(raise_exception=True)
-
+            self.kwargs['username'] = request.user.username
             self.partial_update(request)
             request.user.refresh_from_db()
+
         serializer = self.get_serializer(request.user)
         return Response(serializer.data)
 
