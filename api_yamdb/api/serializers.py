@@ -7,7 +7,6 @@ from reviews.models import Category, Comment, Genre, Review, Title, User
 from reviews.validators import validate_username_not_me, RegexUsernameValidator
 
 
-
 class UserSerializer(serializers.ModelSerializer):
     """Сериализатор для просмотра и создания пользователей админом."""
 
@@ -27,7 +26,6 @@ class AccountSerializer(UserSerializer):
     """Сериализатор для просмотра юзером своего профиля."""
 
     role = serializers.CharField(max_length=9, read_only=True)
-    username = serializers.CharField(max_length=150, read_only=True)
 
 
 class SignUpSerializer(serializers.Serializer):
