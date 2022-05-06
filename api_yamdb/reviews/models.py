@@ -3,9 +3,9 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from .validators import (
+    RegexUsernameValidator,
     validate_year,
     validate_username_not_me,
-    RegexUsernameValidator,
 )
 
 
