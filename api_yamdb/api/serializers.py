@@ -109,6 +109,7 @@ class TitleReadSerializer(serializers.ModelSerializer):
             'category',
             'rating',
         )
+        read_only_fields = [f.name for f in Title._meta.get_fields()]
 
 
 class TitleWriteSerializer(serializers.ModelSerializer):

@@ -39,36 +39,30 @@ class User(AbstractUser):
 class CategoryGenreModel(models.Model):
     """Базовый класс для моделей Category и Genre."""
 
-    slug = models.SlugField('слаг', max_length=50, unique=True, db_index=True)
+    slug = models.SlugField('Cлаг', max_length=50, unique=True, db_index=True)
+    name = models.TextField('Название', max_length=256)
 
     class Meta:
         abstract = True
+
+    def __str__(self):
+        return f'Название - {self.name}'
 
 
 class Genre(CategoryGenreModel):
     """Модель жанров."""
 
-    name = models.TextField('Название жанра', max_length=256)
-
     class Meta:
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанры'
-
-    def __str__(self):
-        return f'Название - {self.name}'
 
 
 class Category(CategoryGenreModel):
     """Модель категорий."""
 
-    name = models.CharField('Название категории', max_length=256)
-
     class Meta:
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
-
-    def __str__(self):
-        return f'Название - {self.name}'
 
 
 class Title(models.Model):

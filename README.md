@@ -16,7 +16,7 @@ ________________________
 - [Владимира Мазняка](https://github.com/Cognitoid).
 __________________________
 
-#### Requirements:
+#### Список внешних зависимостей:
 * Python 3.8
 * Django 2.2
 * Django rest framework 3.12
@@ -30,7 +30,7 @@ __________________________
 ```cd api_yamdb```
 
 - Создать и активировать виртуальное окружение:\
-```python3 -m venv env```\
+```python -m venv env```\
 ```source env/bin/activate```
 
 - Установить зависимости из файла requirements.txt:\
