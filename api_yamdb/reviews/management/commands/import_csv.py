@@ -1,3 +1,7 @@
+"""Импорт csv-файлов из папки static/data/. 
+Если поля модели отличаются от полей таблицы, 
+укажите оба поля в словаре DIFFERENT_FIELDS."""
+
 import csv
 
 from django.core.management.base import BaseCommand, CommandError
