@@ -28,6 +28,4 @@ class IsAdmin(BasePermission):
     message = 'Такие права имеет только админ.'
 
     def has_permission(self, request, view):
-        if request.user.is_authenticated:
-            return request.user.is_admin()
-        return False
+        return request.user.is_authenticated and request.user.is_admin()
