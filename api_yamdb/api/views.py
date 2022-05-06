@@ -36,6 +36,7 @@ from .utils import (
     get_tokens_for_user,
     get_user,
     send_email,
+    check_username_email,
 )
 
 
@@ -57,23 +58,29 @@ class UserSignUp(APIView):
 
     def post(self, request):
         serializer = SignUpSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
-        if serializer.is_valid(raise_exception=False):
-            confirmation_code = create_confirmation_code()
-            email = serializer.validated_data['email']
-            name = serializer.validated_data['username']
-            serializer.save(confirmation_code=confirmation_code)
-            send_email(email, confirmation_code, name)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+        email = serializer.validated_data['email']
+        username = serializer.validated_data['username']
 
-        user = get_user(serializer)
+        user = get_user(username, email)
+
         if user:
-            email = user.email
-            name = user.username
             confirmation_code = user.confirmation_code
-            send_email(email, confirmation_code, name)
+            send_email(email, confirmation_code, username)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        if check_username_email(username, email):
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        confirmation_code = create_confirmation_code()
+        serializer.validated_data['email'] = email.lower()
+
+        serializer.save(confirmation_code=confirmation_code)
+        send_email(email, confirmation_code, username)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class UserAuth(generics.CreateAPIView):
@@ -123,7 +130,6 @@ class UsersViewSet(ModelViewSet):
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
-
         serializer = self.get_serializer(request.user)
         return Response(serializer.data)
 
