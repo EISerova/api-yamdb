@@ -11,7 +11,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
-from reviews.models import Category, Genre, Review, Title, User
 from .filters import TitleFilter
 from .mixins import CreateDestroyListMixin
 from .permissions import (
@@ -19,6 +18,7 @@ from .permissions import (
     IsAdminUserOrReadOnly,
     IsAuthorAdminModeratorOrReadOnly,
 )
+from reviews.models import Category, Genre, Review, Title, User
 from .serializers import (
     AccountSerializer,
     CategorySerializer,
@@ -32,11 +32,11 @@ from .serializers import (
     UserSerializer,
 )
 from .utils import (
+    check_username_email,
     create_confirmation_code,
     get_tokens_for_user,
     get_user,
     send_email,
-    check_username_email,
 )
 
 
@@ -51,7 +51,8 @@ class CategoryGenreViewSet(CreateDestroyListMixin, GenericViewSet):
 
 class UserSignUp(APIView):
     """
-    Регистрация новых пользователей и отправка кода подтвержения на почту.
+    Регистрация новых пользователей
+    и отправка кода подтвержения на почту.
     """
 
     permission_classes = (AllowAny,)

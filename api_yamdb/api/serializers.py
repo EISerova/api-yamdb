@@ -4,7 +4,7 @@ from rest_framework.relations import SlugRelatedField
 
 from api_yamdb.settings import CONFIRMATION_CODE_LENGTH
 from reviews.models import Category, Comment, Genre, Review, Title, User
-from reviews.validators import validate_username_not_me, RegexUsernameValidator
+from reviews.validators import RegexUsernameValidator, validate_username_not_me
 
 
 class UserSerializer(serializers.ModelSerializer):

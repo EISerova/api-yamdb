@@ -2,12 +2,12 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
+from api_yamdb.settings import CONFIRMATION_CODE_LENGTH
 from .validators import (
     RegexUsernameValidator,
-    validate_year,
     validate_username_not_me,
+    validate_year,
 )
-from api_yamdb.settings import CONFIRMATION_CODE_LENGTH
 
 
 class User(AbstractUser):
@@ -96,7 +96,9 @@ class Title(models.Model):
         blank=False,
         verbose_name="категория",
     )
-    genre = models.ManyToManyField(Genre, related_name='titles', blank=False, verbose_name="жанр")
+    genre = models.ManyToManyField(
+        Genre, related_name='titles', blank=False, verbose_name="жанр"
+    )
 
     class Meta:
         verbose_name = 'Произведение'
