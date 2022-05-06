@@ -5,8 +5,9 @@ from reviews.models import Category, Genre, Review, Title, Comment, User
 
 
 class Command(BaseCommand):
-    help = 'Запись в БД данных из csv-файлов'
-
+    ERROR_MESSAGE = 'Ошибка - {error}, проблема в строке - {row}.'
+    DONE_MESSAGE = 'Данные из {file} перенесены в таблицу {model}.'
+    
     MODELS_FILES = {
         User: 'users.csv',
         Category: 'category.csv',
@@ -21,6 +22,8 @@ class Command(BaseCommand):
         Comment: ['author', 'author_id'],
         Title: ['category', 'category_id'],
     }
+    
+    help = 'Запись в БД данных из csv-файлов'
 
     def handle(self, *args, **kwargs):
         for model, file in self.MODELS_FILES.items():
@@ -40,11 +43,6 @@ class Command(BaseCommand):
                     try:
                         model.objects.create(**row)
                     except Exception as error:
-                        message = (
-                            f'Ошибка - {error}, проблема в строке - {row}'
-                        )
-                        raise CommandError(message)
+                        raise CommandError(self.ERROR_MESSAGE.format(error=error, row=row))
 
-                self.stdout.write(
-                    f'Данные из файлов перенесены в базу {model}.'
-                )
+                self.stdout.write(self.DONE_MESSAGE.format(file=file, model=model._meta.model_name})
