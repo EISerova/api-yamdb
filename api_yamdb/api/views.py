@@ -128,10 +128,8 @@ class UsersViewSet(ModelViewSet):
                 request.user, data=request.data, partial=True
             )
             serializer.is_valid(raise_exception=True)
-            self.kwargs['username'] = request.user.username
-            self.partial_update(request)
-            request.user.refresh_from_db()
-
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
         serializer = self.get_serializer(request.user)
         return Response(serializer.data)
 
