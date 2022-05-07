@@ -40,9 +40,6 @@ class SignUpSerializer(serializers.Serializer):
         max_length=254, allow_blank=False, allow_null=False
     )
 
-    def create(self, validated_data):
-        return User.objects.create(**validated_data)
-
 
 class TokenSerializer(serializers.Serializer):
     """Сериализатор для создания токенов."""
