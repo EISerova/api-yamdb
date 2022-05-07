@@ -55,9 +55,7 @@ class TokenSerializer(serializers.Serializer):
         validators=[validate_username_not_me, RegexUsernameValidator],
     )
     confirmation_code = serializers.CharField(
-        max_length=CONFIRMATION_CODE_LENGTH,
-        allow_blank=False,
-        allow_null=False,
+        max_length=CONFIRMATION_CODE_LENGTH
     )
 
 
