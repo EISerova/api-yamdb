@@ -33,11 +33,9 @@ from .serializers import (
     UserSerializer,
 )
 from .utils import (
-    check_username_email,
     create_confirmation_code,
     get_tokens_for_user,
-    get_user,
-    send_email,
+    send_email
 )
 
 
