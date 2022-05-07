@@ -25,7 +25,9 @@ class UserSerializer(serializers.ModelSerializer):
 class AccountSerializer(UserSerializer):
     """Сериализатор для просмотра юзером своего профиля."""
 
-    role = serializers.CharField(max_length=9, read_only=True)
+    class Meta(UserSerializer.Meta):
+        read_only_fields = ('role',)
+
 
 
 class SignUpSerializer(serializers.Serializer):
