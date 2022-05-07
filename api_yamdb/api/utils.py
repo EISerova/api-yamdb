@@ -40,19 +40,6 @@ def get_tokens_for_user(user):
     return {'token': str(access)}
 
 
-def get_user(username, email):
-    """
-    Получение пользователя с задаными данными из сериалайзера.
-    Возвращает None, если такой не зарегистрирован.
-    """
-
-    try:
-        user = User.objects.get(username=username, email=email)
-        return user
-    except User.DoesNotExist:
-        return None
-
-
 def check_username_email(username, email):
     """Проверка наличия пользователей с заданными username или email."""
 
