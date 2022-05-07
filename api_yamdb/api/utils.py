@@ -38,11 +38,3 @@ def get_tokens_for_user(user):
 
     access = AccessToken.for_user(user)
     return {'token': str(access)}
-
-
-def check_username_email(username, email):
-    """Проверка наличия пользователей с заданными username или email."""
-
-    username_user = User.objects.filter(username=username).exists()
-    email_user = User.objects.filter(email=email.lower()).exists()
-    return username_user or email_user
