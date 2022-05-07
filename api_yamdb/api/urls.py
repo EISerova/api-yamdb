@@ -7,8 +7,8 @@ from .views import (
     GenreViewSet,
     ReviewViewSet,
     TitleViewSet,
-    UserAuth,
-    UserSignUp,
+    user_auth,
+    user_signup,
     UsersViewSet,
 )
 
@@ -30,7 +30,7 @@ router_v1.register(
 )
 
 urlpatterns = [
-    path('v1/auth/signup/', UserSignUp.as_view()),
-    path('v1/auth/token/', UserAuth.as_view()),
+    path('v1/auth/signup/', user_signup),
+    path('v1/auth/token/', user_auth),
     path('v1/', include(router_v1.urls)),
 ]

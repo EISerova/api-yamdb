@@ -25,7 +25,8 @@ class UserSerializer(serializers.ModelSerializer):
 class AccountSerializer(UserSerializer):
     """Сериализатор для просмотра юзером своего профиля."""
 
-    role = serializers.CharField(max_length=9, read_only=True)
+    class Meta(UserSerializer.Meta):
+        read_only_fields = ('role',)
 
 
 class SignUpSerializer(serializers.Serializer):
@@ -33,16 +34,11 @@ class SignUpSerializer(serializers.Serializer):
 
     username = serializers.CharField(
         max_length=150,
-        allow_blank=False,
-        allow_null=False,
         validators=[validate_username_not_me, RegexUsernameValidator],
     )
     email = serializers.EmailField(
         max_length=254, allow_blank=False, allow_null=False
     )
-
-    def create(self, validated_data):
-        return User.objects.create(**validated_data)
 
 
 class TokenSerializer(serializers.Serializer):
@@ -50,14 +46,10 @@ class TokenSerializer(serializers.Serializer):
 
     username = serializers.CharField(
         max_length=150,
-        allow_blank=False,
-        allow_null=False,
         validators=[validate_username_not_me, RegexUsernameValidator],
     )
     confirmation_code = serializers.CharField(
-        max_length=CONFIRMATION_CODE_LENGTH,
-        allow_blank=False,
-        allow_null=False,
+        max_length=CONFIRMATION_CODE_LENGTH
     )
 
 

@@ -1,14 +1,14 @@
 from django.db.models import Avg
+from django.db.utils import IntegrityError
 from django.shortcuts import get_object_or_404
-from rest_framework import filters, generics, status
-from rest_framework.decorators import action
+from rest_framework import filters, status
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.permissions import (
     AllowAny,
     IsAuthenticated,
     IsAuthenticatedOrReadOnly,
 )
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from .filters import TitleFilter
@@ -31,13 +31,7 @@ from .serializers import (
     TokenSerializer,
     UserSerializer,
 )
-from .utils import (
-    check_username_email,
-    create_confirmation_code,
-    get_tokens_for_user,
-    get_user,
-    send_email,
-)
+from .utils import create_confirmation_code, get_tokens_for_user, send_email
 
 
 class CategoryGenreViewSet(CreateDestroyListMixin, GenericViewSet):
@@ -49,62 +43,51 @@ class CategoryGenreViewSet(CreateDestroyListMixin, GenericViewSet):
     lookup_field = 'slug'
 
 
-class UserSignUp(APIView):
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def user_signup(request):
     """
     Регистрация новых пользователей
     и отправка кода подтвержения на почту.
     """
 
-    permission_classes = (AllowAny,)
+    serializer = SignUpSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
 
-    def post(self, request):
-        serializer = SignUpSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+    email = serializer.validated_data['email'].lower()
+    username = serializer.validated_data['username']
+    confirmation_code = create_confirmation_code()
 
-        email = serializer.validated_data['email']
-        username = serializer.validated_data['username']
+    try:
+        user, created = User.objects.get_or_create(
+            username=username,
+            email=email,
+            defaults={'confirmation_code': confirmation_code},
+        )
+    except IntegrityError:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        user = get_user(username, email)
+    if not created:
+        confirmation_code = user.confirmation_code
 
-        if user:
-            confirmation_code = user.confirmation_code
-            send_email(email, confirmation_code, username)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
-        if check_username_email(username, email):
-            return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
-
-        confirmation_code = create_confirmation_code()
-        serializer.validated_data['email'] = email.lower()
-
-        serializer.save(confirmation_code=confirmation_code)
-        send_email(email, confirmation_code, username)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    send_email(email, confirmation_code, username)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class UserAuth(generics.CreateAPIView):
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def user_auth(request):
     """Получение пользователем токена."""
 
-    serializer_class = TokenSerializer
-    permission_classes = (AllowAny,)
-
-    def get_object(self):
-        return get_object_or_404(User, username=self.request.user)
-
-    def create(self, request):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = get_object_or_404(
-            User, username=serializer.validated_data['username']
-        )
-        if request.data['confirmation_code'] != user.confirmation_code:
-            return Response(
-                serializer.data, status=status.HTTP_400_BAD_REQUEST
-            )
-        response = get_tokens_for_user(user)
-        return Response(response, status=status.HTTP_200_OK)
+    serializer = TokenSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    user = get_object_or_404(
+        User, username=serializer.validated_data['username']
+    )
+    if request.data['confirmation_code'] != user.confirmation_code:
+        return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+    response = get_tokens_for_user(user)
+    return Response(response, status=status.HTTP_200_OK)
 
 
 class UsersViewSet(ModelViewSet):
@@ -124,15 +107,16 @@ class UsersViewSet(ModelViewSet):
         serializer_class=AccountSerializer,
     )
     def me(self, request):
-        if self.request.method == 'PATCH':
-            serializer = self.get_serializer(
-                request.user, data=request.data, partial=True
-            )
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        serializer = self.get_serializer(request.user)
-        return Response(serializer.data)
+        if self.request.method != 'PATCH':
+            serializer = self.get_serializer(request.user)
+            return Response(serializer.data)
+
+        serializer = self.get_serializer(
+            request.user, data=request.data, partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class CategoryViewSet(CategoryGenreViewSet):

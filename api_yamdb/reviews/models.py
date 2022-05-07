@@ -8,6 +8,7 @@ from .validators import (
     validate_username_not_me,
     validate_year,
 )
+from .ulils import get_max_role_length
 
 
 class User(AbstractUser):
@@ -21,6 +22,8 @@ class User(AbstractUser):
         (MODERATOR, 'moderator'),
         (ADMIN, 'admin'),
     )
+    max_role_length = get_max_role_length(ROLES)
+
     username = models.CharField(
         max_length=150,
         unique=True,
@@ -34,20 +37,18 @@ class User(AbstractUser):
     )
     role = models.CharField(
         'Роль',
-        max_length=9,
+        max_length=max_role_length,
         default=USER,
         blank=False,
         choices=ROLES,
     )
-    email = models.EmailField(
-        'почта', max_length=254, blank=False, null=False, unique=True
-    )
+    email = models.EmailField('почта', max_length=254, unique=True)
     confirmation_code = models.CharField(
         'Код подтверждения', max_length=CONFIRMATION_CODE_LENGTH, null=True
     )
 
     def is_admin(self):
-        return self.role == self.ADMIN or self.is_superuser or self.is_staff
+        return self.role == self.ADMIN or self.is_staff
 
     def is_moderator(self):
         return self.role == self.MODERATOR
