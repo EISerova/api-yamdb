@@ -33,8 +33,6 @@ class SignUpSerializer(serializers.Serializer):
 
     username = serializers.CharField(
         max_length=150,
-        allow_blank=False,
-        allow_null=False,
         validators=[validate_username_not_me, RegexUsernameValidator],
     )
     email = serializers.EmailField(
