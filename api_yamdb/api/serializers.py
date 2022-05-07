@@ -29,7 +29,6 @@ class AccountSerializer(UserSerializer):
         read_only_fields = ('role',)
 
 
-
 class SignUpSerializer(serializers.Serializer):
     """Сериализатор для регистрации."""
 

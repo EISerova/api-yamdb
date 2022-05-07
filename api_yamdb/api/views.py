@@ -1,4 +1,5 @@
 from django.db.models import Avg
+from django.db.utils import IntegrityError
 from django.shortcuts import get_object_or_404
 from rest_framework import filters, generics, status
 from rest_framework.decorators import action
@@ -61,25 +62,22 @@ class UserSignUp(APIView):
         serializer = SignUpSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        email = serializer.validated_data['email']
+        email = serializer.validated_data['email'].lower()
         username = serializer.validated_data['username']
-
-        user = get_user(username, email)
-
-        if user:
-            confirmation_code = user.confirmation_code
-            send_email(email, confirmation_code, username)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
-        if check_username_email(username, email):
+        confirmation_code = create_confirmation_code()
+        try:
+            user, created = User.objects.get_or_create(
+                username=username,
+                email=email,
+                defaults={'confirmation_code': confirmation_code},
+            )
+        except IntegrityError:
             return Response(
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
+        if not created:
+            confirmation_code = user.confirmation_code
 
-        confirmation_code = create_confirmation_code()
-        serializer.validated_data['email'] = email.lower()
-
-        serializer.save(confirmation_code=confirmation_code)
         send_email(email, confirmation_code, username)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
