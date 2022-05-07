@@ -157,7 +157,7 @@ class Review(ReviewCommentModel):
             score=self.score,
         )
 
-    class Meta:
+    class Meta(ReviewCommentModel.Meta):
         default_related_name = 'reviews'
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
@@ -192,7 +192,7 @@ class Comment(ReviewCommentModel):
             review=self.review,
         )
 
-    class Meta:
+    class Meta(ReviewCommentModel.Meta):
         default_related_name = 'comments'
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
