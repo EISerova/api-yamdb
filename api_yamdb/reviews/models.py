@@ -39,9 +39,7 @@ class User(AbstractUser):
         blank=False,
         choices=ROLES,
     )
-    email = models.EmailField(
-        'почта', max_length=254, blank=False, null=False, unique=True
-    )
+    email = models.EmailField('почта', max_length=254, unique=True)
     confirmation_code = models.CharField(
         'Код подтверждения', max_length=CONFIRMATION_CODE_LENGTH, null=True
     )
