@@ -8,6 +8,7 @@ from .validators import (
     validate_username_not_me,
     validate_year,
 )
+from .ulils import get_max_role_length
 
 
 class User(AbstractUser):
@@ -21,6 +22,8 @@ class User(AbstractUser):
         (MODERATOR, 'moderator'),
         (ADMIN, 'admin'),
     )
+    max_role_length = get_max_role_length(ROLES)
+
     username = models.CharField(
         max_length=150,
         unique=True,
@@ -34,7 +37,7 @@ class User(AbstractUser):
     )
     role = models.CharField(
         'Роль',
-        max_length=9,
+        max_length=max_role_length,
         default=USER,
         blank=False,
         choices=ROLES,

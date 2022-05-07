@@ -3,12 +3,12 @@ import random
 from django.core.mail import send_mail
 from rest_framework_simplejwt.tokens import AccessToken
 
+from reviews.models import User
 from api_yamdb.settings import (
     CONFIRMATION_CODE_CHARACTERS,
     CONFIRMATION_CODE_LENGTH,
     EMAIL_HOST_USER,
 )
-from reviews.models import User
 
 
 def create_confirmation_code():
