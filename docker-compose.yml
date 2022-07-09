@@ -1,0 +1,40 @@
+version: "3"
+
+services:
+  raiting_db:
+    container_name: raiting_db
+    image: mysql
+    environment:
+      MYSQL_DATABASE: raiting_db
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: 12345
+      MYSQL_ROOT_PASSWORD: root
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - "5432:5432"
+    networks:
+      - drf
+    restart: always
+
+  raiting-api:
+    container_name: raiting-api
+    build:
+      context: .
+    command: >
+      sh -c "python /usr/scr/raiting-drf/manage.py collectstatic --noinput &&
+             python /usr/scr/raiting-drf/manage.py makemigrations &&
+             python /usr/scr/raiting-drf/manage.py migrate &&
+             python /usr/scr/raiting-drf/manage.py runserver 0.0.0.0:8000"
+
+    volumes:
+      - .:/usr/scr/raiting-drf
+    ports:
+      - "8001:8000"
+    depends_on:
+      - raiting_db
+    networks:
+      - drf
+    restart: always
+
+networks:
+  drf:
