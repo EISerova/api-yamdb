@@ -90,9 +90,9 @@ Django rest framework 3.12
 ```
 
 ### Авторы: 
-- [Екатерины Серовой](https://github.com/EISerova/),
-- [Анны Бакарасовой](https://github.com/Bakarasik),
-- [Владимира Мазняка](https://github.com/Cognitoid).
+- [Екатерина Серова](https://github.com/EISerova/),
+- [Анна Бакарасова](https://github.com/Bakarasik),
+- [Владимир Мазняк](https://github.com/Cognitoid).
 
 ### Обратная связь:
 Если у вас есть предложения или замечания, пожалуйста, свяжитесь со мной - katyaserova@yandex.ru
