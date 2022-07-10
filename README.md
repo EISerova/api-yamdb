@@ -48,7 +48,7 @@ Django rest framework 3.12
 Клонировать репозиторий
 
 ```bash
-  git clone https://github.com/EISerova/api_yamdb
+  git clone git@github.com:EISerova/api-yamdb.git
 ```
 
 Перейти в папку проекта
