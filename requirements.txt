@@ -1,5 +1,5 @@
 requests==2.26.0
-Django==4.0.4
+django==2.2.16
 django-filter==21.1
 django-templated-mail==1.1.1
 djangorestframework==3.13.1
