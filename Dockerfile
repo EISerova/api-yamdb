@@ -1,4 +1,4 @@
-FROM python:3
+FROM python:3.7-slim
 LABEL website='https://github.com/EISerova/api_yamdb'
 LABEL desc='This raiting source create for studing'
 LABEL email='katyaserova@yandex.ru'
